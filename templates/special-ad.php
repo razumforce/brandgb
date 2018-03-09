@@ -1,0 +1,26 @@
+<section class="special-catalog">
+  <div class="special-catalog__offer">
+    <img src="img/women30dark.png" alt="women 30% discount">
+    <span class="special-catalog__offer_text1">30% <span class="special-text_color">OFFER</span></span>
+    <span class="special-catalog__offer_text2">FOR WOMEN</span>
+  </div>
+  <div class="special-catalog__items">
+    <div class="special-catalog__items_row">
+      <img src="img/icon-del-truck.png" alt="free delivery">
+      <span>Free Delivery</span>
+      <p>Worldwide delivery on all.Authorit tively morph next-generation innov tion with extensive models.</p>
+    </div>
+     <div class="special-catalog__items_row">
+      <img src="img/icon-discount.png" alt="sales & discounts">
+      <span>Sales &amp; Discounts</span>
+      <p>Worldwide delivery on all.Authorit tively morph next-generation innov tion with extensive models.</p>
+    </div>
+     <div class="special-catalog__items_row">
+      <img src="img/icon-assurance.png" alt="quality assurance">
+      <span>Quality assurance</span>
+      <p>Worldwide delivery on all.Authorit tively morph next-generation innov tion with extensive models.</p>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+</section>

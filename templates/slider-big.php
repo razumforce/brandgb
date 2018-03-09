@@ -1,0 +1,35 @@
+<section class="main-slider">
+    <div id="index-slider" class="index-slider carousel slide" data-ride="carousel" data-interval="5000">
+      <!-- Indicators -->
+      <ol class="carousel-indicators slider-ind">
+        <li data-target="#index-slider" data-slide-to="0" class="active"></li>
+        <li data-target="#index-slider" data-slide-to="1"></li>
+        <li data-target="#index-slider" data-slide-to="2"></li>
+      </ol>
+
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner">
+        <div class="item active">
+          <img src="./img/top-slider1.png" alt="slider-0">
+        </div>
+
+        <div class="item">
+          <img src="./img/top-slider1.png" alt="slider-0">
+        </div>
+
+        <div class="item">
+          <img src="./img/top-slider1.png" alt="slider-0">
+        </div>
+      </div>
+      
+      <div class="main-slider__rect">
+        <img src="img/Rectangle16.png" alt="rectangle sign">
+      </div>
+      <div class="main-slider__words_big">
+        <span>THE &nbsp;BRAND</span>
+      </div>
+      <div class="main-slider__words_small">
+        <span>OF &nbsp;LUXERIOUS <span class="special-text_color">&nbsp;FASHION</span></span>
+      </div>
+    </div>
+</section>
