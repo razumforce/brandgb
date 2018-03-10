@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Mar 10, 2018 at 05:21 PM
+-- Generation Time: Mar 09, 2018 at 03:03 PM
 -- Server version: 5.6.38
 -- PHP Version: 7.2.1
 
@@ -123,22 +123,23 @@ CREATE TABLE `items` (
   `description` varchar(2048) NOT NULL,
   `short_description` text NOT NULL,
   `material_id` int(11) NOT NULL,
-  `designer_id` int(11) NOT NULL
+  `designer_id` int(11) NOT NULL,
+  `ID_UUID` varchar(250) NOT NULL DEFAULT 'SELECT UUID()'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`id_item`, `name`, `price`, `category_id`, `status`, `date`, `views`, `rating`, `description`, `short_description`, `material_id`, `designer_id`) VALUES
-(1, 'MANGO PEOPLE T-SHIRT', '52.00', 1, 1, '2018-03-06 20:20:05', 0, 7, 'xxxxxx', 'xxxx', 1, 1),
-(2, 'MANGO  T-SHIRT', '62.00', 1, 1, '2018-03-06 20:28:36', 0, 0, 'sdgfssgrhsrth', 'fdgdff', 1, 1),
-(3, 'XXX T-SHIRT', '110.11', 1, 2, '2018-03-06 20:29:25', 0, 0, 'dfgrsteghsbfb', 'fdgfdg', 2, 2),
-(4, 'MANGO  T-SHIRT', '63.00', 1, 1, '2018-03-08 04:43:14', 0, 0, 'dsfaeerhbgfnth', 'sdfa', 1, 3),
-(5, 'BLAZE LEGGINGS', '35.00', 2, 2, '2018-03-08 04:45:51', 0, 0, 'sdafsgfger', 'sdfdsf', 3, 4),
-(6, 'ALEXA SWEATER', '45.00', 2, 1, '2018-03-08 04:45:51', 0, 2, 'agghterhqer', 'sdf', 1, 5),
-(7, 'AGNES TOP', '22.22', 2, 1, '2018-03-08 04:45:51', 0, 0, 'dsagfdgfdg', 'sddssd', 1, 2),
-(8, 'SYLVA SWEATER', '300.00', 2, 2, '2018-03-08 04:45:51', 0, 3, 'sdagfdg', 'sddds', 2, 2);
+INSERT INTO `items` (`id_item`, `name`, `price`, `category_id`, `status`, `date`, `views`, `rating`, `description`, `short_description`, `material_id`, `designer_id`, `ID_UUID`) VALUES
+(1, 'MANGO PEOPLE T-SHIRT', '52.00', 1, 1, '2018-03-06 20:20:05', 0, 7, 'xxxxxx', 'xxxx', 1, 1, 'SELECT UUID()'),
+(2, 'MANGO  T-SHIRT', '62.00', 1, 1, '2018-03-06 20:28:36', 0, 0, 'sdgfssgrhsrth', 'fdgdff', 1, 1, 'SELECT UUID()'),
+(3, 'XXX T-SHIRT', '110.11', 1, 2, '2018-03-06 20:29:25', 0, 0, 'dfgrsteghsbfb', 'fdgfdg', 2, 2, 'SELECT UUID()'),
+(4, 'MANGO  T-SHIRT', '63.00', 1, 1, '2018-03-08 04:43:14', 0, 0, 'dsfaeerhbgfnth', 'sdfa', 1, 3, 'SELECT UUID()'),
+(5, 'BLAZE LEGGINGS', '35.00', 2, 2, '2018-03-08 04:45:51', 0, 0, 'sdafsgfger', 'sdfdsf', 3, 4, 'SELECT UUID()'),
+(6, 'ALEXA SWEATER', '45.00', 2, 1, '2018-03-08 04:45:51', 0, 2, 'agghterhqer', 'sdf', 1, 5, 'SELECT UUID()'),
+(7, 'AGNES TOP', '22.22', 2, 1, '2018-03-08 04:45:51', 0, 0, 'dsagfdgfdg', 'sddssd', 1, 2, 'SELECT UUID()'),
+(8, 'SYLVA SWEATER', '300.00', 2, 2, '2018-03-08 04:45:51', 0, 3, 'sdagfdg', 'sddds', 2, 2, 'SELECT UUID()');
 
 -- --------------------------------------------------------
 
@@ -234,28 +235,22 @@ CREATE TABLE `photos` (
   `id_photo` int(11) NOT NULL,
   `url` text NOT NULL,
   `item_id` int(11) NOT NULL,
-  `type` tinyint(1) NOT NULL DEFAULT '0'
+  `small_size` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `photos`
 --
 
-INSERT INTO `photos` (`id_photo`, `url`, `item_id`, `type`) VALUES
-(1, '/img/featured1.png', 1, 0),
-(2, '/img/featured2.png', 2, 0),
-(3, '/img/featured3.png', 3, 0),
-(4, '/img/featured4.png', 4, 0),
-(5, '/img/featured5.png', 5, 0),
-(6, '/img/featured6.png', 6, 0),
-(7, '/img/featured7.png', 7, 0),
-(8, '/img/featured8.png', 8, 0),
-(9, '/img/single/product-big-photo.png', 1, 2),
-(10, '/img/single/product-big-photo.png', 1, 1),
-(11, '/img/single/product-big-photo.png', 2, 1),
-(12, '/img/single/product-big-photo.png', 2, 2),
-(13, '/img/single/product-big-photo.png', 2, 1),
-(14, '/img/single/product-big-photo.png', 2, 1);
+INSERT INTO `photos` (`id_photo`, `url`, `item_id`, `small_size`) VALUES
+(1, 'img/featured1.png', 1, 1),
+(2, 'img/featured2.png', 2, 1),
+(3, 'img/featured3.png', 3, 1),
+(4, 'img/featured4.png', 4, 1),
+(5, 'img/featured5.png', 5, 1),
+(6, 'img/featured6.png', 6, 1),
+(7, 'img/featured7.png', 7, 1),
+(8, 'img/featured8.png', 8, 1);
 
 -- --------------------------------------------------------
 
@@ -406,7 +401,7 @@ ALTER TABLE `materials`
 -- AUTO_INCREMENT for table `photos`
 --
 ALTER TABLE `photos`
-  MODIFY `id_photo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_photo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `shipping`

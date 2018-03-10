@@ -19,7 +19,7 @@ from basket inner join items on basket.item_id = items.id_item
 inner join colors on basket.color_id = colors.id_color
 inner join sizes on basket.size_id = sizes.id_size
 inner join shipping on basket.shipping_id = shipping.id_shipping
-left join (select * from photos where small_size = true) as ph on ph.item_id = basket.item_id;';
+left join (select * from photos where type = 0) as ph on ph.item_id = basket.item_id;';
   return getAssocResult($sql);
 }
 

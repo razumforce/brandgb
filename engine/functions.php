@@ -19,7 +19,7 @@ function prepareVariables($page_name)
 		case "single":
 			$vars['content'] = '../templates/single.php';
 			$vars['maylike_product'] = maylikeProduct();
-			$vars['single_item'] = singleItemLoad();
+			$vars['single_item'] = singleItemLoad($_GET['id']);
 		break;
 		
 		case "product":
@@ -43,33 +43,66 @@ function prepareVariables($page_name)
 
 function featuredProduct()
 {
-	$sql = 'SELECT * FROM photos RIGHT JOIN items on item_id = id_item WHERE small_size = true LIMIT 8;';
+	$sql = 'SELECT * FROM photos RIGHT JOIN items on item_id = id_item WHERE type = 0 LIMIT 8;';
 	return getAssocResult($sql);
 }
 
 function maylikeProduct()
 {
-	$sql = "SELECT * FROM photos RIGHT JOIN items on item_id = id_item WHERE small_size = true and category_id = '2' LIMIT 4;";
+	$sql = "SELECT * FROM photos RIGHT JOIN items on item_id = id_item WHERE type = 0 and category_id = '2' LIMIT 4;";
 	return getAssocResult($sql);
 }
 
-function singleItemLoad() {
+function singleItemLoad($id) {
+	$sqlDetails = "select
+items.id_item, items.name as items_name, items.description, items.price,
+categories.name as categories_name,
+materials.name as materials_name,
+designers.name as designers_name
+from items inner join categories on items.category_id = categories.id_category
+inner join materials on items.material_id = materials.id_material
+inner join designers on items.designer_id = designers.id_designer
+where items.id_item = $id;";
+
+	$sqlColors = "select colors.code as color_code, colors.name as color_name
+from items_colors inner join colors on items_colors.color_id = colors.id_color where items_colors.item_id = $id;";
+
+	$sqlSizes = "select sizes.name
+from items_sizes inner join sizes on items_sizes.size_id = sizes.id_size where items_sizes.item_id = $id;";
+
+	$sqlPics = "select url, type from photos where type <> 0 and item_id = $id;";
+
+	$details = getAssocResult($sqlDetails);
+	$colors = getAssocResult($sqlColors);
+	$sizes = getAssocResult($sqlSizes);
+	$pics = getAssocResult($sqlPics);
+
+	
+
 	$result = [];
 
-	$result['id'] = 100;
-	$result['collection'] = "WOMEN COLLECTION";
-	$result['name'] = "NEW ITEM 100";
-	$result['material'] = "SILK";
-	$result['designer'] = "BINBURHAN";
-	$result['description'] = "Compellingly actual ourcing. Progressively syndicate collaborative  before cuttin-edge services. Comple";
-	$result['color'] = [
-		'color_code' => ["#000000", "#000088"],
-		'color_name' => ["Black", "Blue"]
-	];
-	$result['size'] = ["XL", "M", "S"];
-	$result['price'] = "125.77";
-	$result['pic'] = [['url' => "./img/single/product-big-photo.png", 'status' => "active"],
-										['url' => "./img/single/product-big-photo.png", 'status' => ""]];
+	$result['id'] = $id;
+	$result['collection'] = $details[0]['categories_name'];
+	$result['name'] = $details[0]['items_name'];
+	$result['material'] = $details[0]['materials_name'];
+	$result['designer'] = $details[0]['designers_name'];
+	$result['description'] = $details[0]['description'];
+	$result['price'] = $details[0]['price'];
+
+	$result['size'] = $sizes;
+	$result['color'] = $colors;
+
+	$activePicSet = false;
+	foreach ($pics as $key => $pic) {
+		if ($pic['type'] == 2 && !$activePicSet) {
+			$pics[$key]['type'] = 'active';
+			$activePicSet = true;
+		} else {
+			$pics[$key]['type'] = '';
+		}
+	}
+
+	$result['pic'] = $pics;
 
 	return $result;
 }

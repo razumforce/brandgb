@@ -3,7 +3,7 @@
     <!-- Indicators -->
     <ol class="carousel-indicators slider-ind single-slider-ind">
       <?php foreach ($content['single_item']['pic'] as $key => $pic): ?>
-        <li data-target="#single-slider-div" data-slide-to="<?=$key;?>" class="<?=$pic['status'];?>"></li>
+        <li data-target="#single-slider-div" data-slide-to="<?=$key;?>" class="<?=$pic['type'];?>"></li>
       <?php endforeach; ?>
 
 <!-- 
@@ -18,7 +18,7 @@
     <div class="carousel-inner">
 
     <?php foreach ($content['single_item']['pic'] as $key => $pic): ?>
-      <div class="item <?=$pic['status'];?>">
+      <div class="item <?=$pic['type'];?>">
         <img src="<?=$pic['url'];?>" alt="single-<?=$key;?>">
       </div>
     <?php endforeach; ?>
