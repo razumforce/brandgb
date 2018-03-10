@@ -2,8 +2,11 @@
   <div id="single-slider-div" class="carousel slide" data-ride="carousel" data-interval="5000">
     <!-- Indicators -->
     <ol class="carousel-indicators slider-ind single-slider-ind">
-<!--
-     
+      <?php foreach ($content['single_item']['pic'] as $key => $pic): ?>
+        <li data-target="#single-slider-div" data-slide-to="<?=$key;?>" class="<?=$pic['status'];?>"></li>
+      <?php endforeach; ?>
+
+<!-- 
       <li data-target="#single-slider-div" data-slide-to="0" class="active"></li>
       <li data-target="#single-slider-div" data-slide-to="1"></li>
       <li data-target="#single-slider-div" data-slide-to="2"></li>
@@ -13,7 +16,14 @@
 
     <!-- Wrapper for slides -->
     <div class="carousel-inner">
-     
+
+    <?php foreach ($content['single_item']['pic'] as $key => $pic): ?>
+      <div class="item <?=$pic['status'];?>">
+        <img src="<?=$pic['url'];?>" alt="single-<?=$key;?>">
+      </div>
+    <?php endforeach; ?>
+
+
 <!--
      
       <div class="item active">

@@ -43,8 +43,6 @@ $(document).ready(function() {
 // код для страницы single.html
 
   if ($('.maylike-items').length !== 0) {
-    // singleItemLoad();
-    // singleMaylikeLoad();
     $('button.single-item__item-add').first().on('click', basket, addItemToBasket);
     $('.maylike-catalog').first().on('click', '.product-items__item_add>span', basket, gotoSingleItem);
   }

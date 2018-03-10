@@ -9,7 +9,8 @@ require_once('../engine/db.php');
 // print_r($_GET);
 // echo "</pre>";
 
-$url_array = explode("/", $_SERVER['REQUEST_URI']);
+
+$url_array = explode("/", $_SERVER['REDIRECT_URL']);
 if ($url_array[1] == "") {
 
 	$page_name = "index";
@@ -23,7 +24,9 @@ if ($url_array[1] == "") {
 $content = prepareVariables($page_name);
 
 // echo "<pre>";
-//print_r($url_array);
+// print_r($page_name);
+// print_r($_GET);
+// print_r($url_array);
 // print_r($content); 
 // echo "</pre>";
 

@@ -54,5 +54,22 @@ function maylikeProduct()
 }
 
 function singleItemLoad() {
-	
+	$result = [];
+
+	$result['id'] = 100;
+	$result['collection'] = "WOMEN COLLECTION";
+	$result['name'] = "NEW ITEM 100";
+	$result['material'] = "SILK";
+	$result['designer'] = "BINBURHAN";
+	$result['description'] = "Compellingly actual ourcing. Progressively syndicate collaborative  before cuttin-edge services. Comple";
+	$result['color'] = [
+		'color_code' => ["#000000", "#000088"],
+		'color_name' => ["Black", "Blue"]
+	];
+	$result['size'] = ["XL", "M", "S"];
+	$result['price'] = "125.77";
+	$result['pic'] = [['url' => "./img/single/product-big-photo.png", 'status' => "active"],
+										['url' => "./img/single/product-big-photo.png", 'status' => ""]];
+
+	return $result;
 }

@@ -1,61 +1,6 @@
 "use strict";
 
-function singleItemLoad() {
-  var singleId = Cookies.get('singleid');
-  if (typeof singleId === 'undefined') {
-    singleId = 'x';
-  }
-  console.log(singleId);
-  $.get({
-      url: './serverdata/single' + singleId + '.json',
-      dataType: 'json',
-      success: function (data) {
-          if (data.result) {
-            var $item = $('.single-item').first();
-            $item.children('form').first().attr('data-id', data.item.id);
-            $item.children('h2').first().text(data.item.collection);
-            $item.children('.single-item__item-details').first().children('span').first().text(data.item.name);
-            $item.children('.single-item__item-details').first().children('p').first().text(data.item.description);
-            $item.find('.single-item__item-details_info-det').first().children('span:nth-child(2)').text(data.item.material);
-            $item.find('.single-item__item-details_info-det:nth-child(2)').children('span:nth-child(2)').text(data.item.designer);
-            $item.find('.single-item__item-details_price').first().children('span').text(data.item.price);
-            $item.find('#single-item-color>div>span:first-child').html('<i class="fa fa-square" style="color: ' + 
-                                                                data.item.color_code[0] + ';"></i>&nbsp;&nbsp;&nbsp;' +
-                                                                data.item.color[0]);
-            singleLoadColorOptions($item.find('#single-item-color>ul'), data.item.color_code, data.item.color);
-            $item.find('#single-item-size>div>span:first-child').text(data.item.size[0]);
-            styledLoadOptions($item.find('#single-item-size>ul'), data.item.size);
-            
-            var $slider = $('#single-slider-div');
-            var $sliderCarousel = $slider.children('ol').first();
-            var $sliderCarouselInner = $slider.children('div').first();
-            for (var i in data.item.pic) {
-              console.log(i, data.item.pic[i]);
-              var $elem = $('<li />');
-              $elem.attr('data-target', '#single-slider-div');
-              $elem.attr('data-slide-to', i);
-              var $divWrapper = $('<div />', {
-                  class: 'item'
-              });
-              if (i == 0) {
-                $elem.addClass('active');
-                $divWrapper.addClass('active');
-              }
-              $elem.appendTo($sliderCarousel);
-              $('<img>', {
-                src: data.item.pic[i],
-                alt: data.item.pic[i].split('/').pop()
-              }).appendTo($divWrapper);
-              $divWrapper.appendTo($sliderCarouselInner);
-              Cookies.remove('singleid');
-            }
-          } else {
-            console.log('SOMETHING WENT WRONG, ERROR MESSAGE: ' + data.message);
-          }
-          
-      }
-  });
-}
+// SINGLE.PHP
 
 function addItemToBasket(event) {
   // event.stopPropagation();
@@ -71,18 +16,6 @@ function addItemToBasket(event) {
     var size = $('#single-item-size>div>span:first-child').text();
     var qty = $('#single-item-qty>div>input').val();
     event.data.add(id, color, size, qty);
-  }
-}
-
-function singleLoadColorOptions($elem, colorCode, colorName) {
-  $elem.html('');
-  for (var i in colorCode) {
-    var optionHTML = '<i class="fa fa-square" style="color: ' + colorCode[i] +
-                 ';"></i>&nbsp;&nbsp;&nbsp;' + colorName[i];
-    var $option = $('<li />', {
-      html: optionHTML
-    });
-    $option.appendTo($elem);
   }
 }
 

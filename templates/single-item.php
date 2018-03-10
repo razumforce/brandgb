@@ -1,40 +1,40 @@
 <section class="single-item">
-  <h2></h2>
+  <h2><?=$content['single_item']['collection']; ?></h2>
   <div class="single-item__title-line">
   </div>
   
   <div class="single-item__item-details">
-    <span></span>
-    <p></p>
+    <span><?=$content['single_item']['name']; ?></span>
+    <p><?=$content['single_item']['description']; ?></p>
     <div class="single-item__item-details_info">
       <div class="single-item__item-details_info-det">
         <span>MATERIAL:</span>
-        <span></span>
+        <span><?=$content['single_item']['material']; ?></span>
       </div>
       <div class="single-item__item-details_info-det">
         <span>DESIGNER:</span>
-        <span></span>
+        <span><?=$content['single_item']['designer']; ?></span>
       </div>
     </div>
     <div class="single-item__item-details_price">
-      <span></span>
+      <span>$<?=$content['single_item']['price']; ?></span>
     </div>
   </div>
   
-  <form class="single-item__item-choice" action="#" data-id="">
+  <form class="single-item__item-choice" action="#" data-id="<?=$content['single_item']['id']; ?>">
     <div class="single-item__item-choice_field">
      
       <div class="single-item__item-choice_type">
         <div for="item-color" class="single-item__item-choice_type-title">CHOOSE COLOR</div>
         <div id="single-item-color" class="styled-drop_box">
           <div>
-            <span><i class="fa fa-square" style="color: #000088"></i>&nbsp;&nbsp;&nbsp;Blue</span>
+            <span><i class="fa fa-square" style="color: <?=$content['single_item']['color']['color_code'][0];?>"></i>&nbsp;&nbsp;&nbsp;<?=$content['single_item']['color']['color_name'][0];?></span>
             <span><i class="fa fa-caret-down"></i></span>
           </div>
           <ul>
-            <li><i class="fa fa-square" style="color: #000088"></i>&nbsp;&nbsp;&nbsp;Blue</li>
-            <li><i class="fa fa-square" style="color: #000000"></i>&nbsp;&nbsp;&nbsp;Red</li>
-            <li><i class="fa fa-square" style="color: #f16d7f"></i>&nbsp;&nbsp;&nbsp;Black</li>
+            <?php foreach ($content['single_item']['color']['color_code'] as $key => $color): ?>
+              <li><i class="fa fa-square" style="color: <?=$content['single_item']['color']['color_code'][$key];?>"></i>&nbsp;&nbsp;&nbsp;<?=$content['single_item']['color']['color_name'][$key];?></li>
+            <?php endforeach; ?>
           </ul>
         </div>  
       </div>
@@ -43,13 +43,13 @@
         <div for="item-size" class="single-item__item-choice_type-title">CHOOSE SIZE</div>
         <div id="single-item-size" class="styled-drop_box">
           <div>
-            <span>XXL</span>
+            <span><?=$content['single_item']['size'][0];?></span>
             <span><i class="fa fa-caret-down"></i></span>
           </div>
           <ul>
-            <li>S</li>
-            <li>M</li>
-            <li>XXL</li>
+            <?php foreach ($content['single_item']['size'] as $key => $size): ?>
+              <li><?=$content['single_item']['size'][$key];?></li>
+            <?php endforeach; ?>
           </ul>
         </div>  
       </div>
