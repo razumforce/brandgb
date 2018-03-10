@@ -74,7 +74,7 @@
 </div>
 <div class="clearfix"></div>
 <div class="product-choice__controls">
-  <div id="product-pagination" class="product-choice__controls_pages" data-page="3">
+  <div id="product-pagination" class="product-choice__controls_pages" data-page="1">
     <span id="product-pagination-left">&lt;</span>
     <span class="product-choice__pag-active">1</span>
     <span id="product-pagination-right">&gt;</span>

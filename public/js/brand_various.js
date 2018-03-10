@@ -37,17 +37,20 @@ function ProductByPage($root, $productItems) {
 }
 
 ProductByPage.prototype.loadAndShow = function() {
+  var itemsPerPage = $('#product-sort-number>div>span:first-child').text();
+  var sortBy = $('#product-sort-name>div>span:first-child').text();
   $.get({
-      url: './serverdata/product' + this.currentPage + '.json',
+      url: './api/get-products.php?page=' + this.currentPage + '&items=' + itemsPerPage + '&sort=' + sortBy,
       dataType: 'json',
       success: function (data) {
           if (data.result) {
-            this.totalPages = parseInt(data.total / 9) + 1;
+            this.totalPages = parseInt(data.total / itemsPerPage) + 1;
             this.renderPagination();
             this.$productItems.each(function(index) {
-              if (data.items[index].id == '') {
+              if (typeof data.items[index] == 'undefined') {
                 $(this).css('visibility', 'hidden');
               } else {
+                $(this).css('visibility', 'visible');
                 $(this).attr('data-id', data.items[index].id);
                 $(this).children('img').attr('src', data.items[index].pic);
                 $(this).children('img').attr('alt', data.items[index].pic.split('/').pop());

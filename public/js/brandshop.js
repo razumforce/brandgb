@@ -8,6 +8,7 @@ $(document).ready(function() {
   if($('#header-search-browse').length !== 0) {
     browseLoadOptions();
     $('#btn-header-browse').on('click', searchBrowseItem);
+    $('#header-search-browse>div>span:first-child').on('change', loadBrowseInput);
   }
 
 // код для HEADER MENU на всех страницах
@@ -38,6 +39,13 @@ $(document).ready(function() {
     var productPagination = new ProductByPage($('#product-pagination'), $('.product-items__item'));
     $('.product-choice').first().on('click', '.product-items__item_add>span', basket, gotoSingleItem);
     $('.product__left-nav').first().on('click', 'span', toggleProductCategory);
+
+    $('#product-sort-name>div>span:first-child').on('change', function() {
+      productPagination.loadAndShow();
+      });
+    $('#product-sort-number>div>span:first-child').on('change', function() {
+      productPagination.loadAndShow();
+      });
   }
 
 // код для страницы single.html
@@ -84,7 +92,6 @@ function gotoSingleItem(event) {
   if (typeof id === 'undefined' || id === '') {
     console.log('no data-id!!!');
   } else {
-    // Cookies.set('singleid', '10'); // MUST CHANGE to id in working version
     window.location.href = './single?id=' + id;
   }
 }
@@ -134,10 +141,7 @@ function toggleStyledDropBox(event) {
 
 function selectStyledDropBox(event) {
   $(event.currentTarget).parent().parent().children('div').first().children('span').first()
-    .html($(event.currentTarget).html());
-  if ($(event.currentTarget).parent().parent().attr('id') == 'header-search-browse') {
-    loadBrowseInput($(event.currentTarget).html());
-  }
+    .html($(event.currentTarget).html()).trigger('change');
 }
 
 function closeAllDropBox() {
@@ -171,7 +175,8 @@ function styledLoadOptions($elem, data) {
   }
 }
 
-function loadBrowseInput(category) {
+function loadBrowseInput(event) {
+  console.log($(event.currentTarget).html());
   $.get({
       url: './serverdata/catinputdata.json',
       dataType: 'json',
