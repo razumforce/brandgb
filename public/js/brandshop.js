@@ -11,6 +11,12 @@ $(document).ready(function() {
     $('#header-search-browse>div>span:first-child').on('change', loadBrowseInput);
   }
 
+// код для My Account на всех страницах
+
+  if($('.header__acc-button').length != 0) {
+    $('.header__acc-button').on('click', toggleMyAccount);
+  }
+
 // код для HEADER MENU на всех страницах
 
   var menuHeader = new Menu();
@@ -197,4 +203,8 @@ function searchBrowseItem(event) {
   $('#info-dialog').attr('title', 'Search');
   $('#info-dialog').html('Searching for: ' + $('#header-browse-input').val());
   $('#info-dialog').dialog();
+}
+
+function toggleMyAccount(event) {
+  $('.header_myaccount').toggle();
 }

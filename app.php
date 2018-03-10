@@ -9,6 +9,8 @@ require_once('../engine/db.php');
 // print_r($_GET);
 // echo "</pre>";
 
+$isAuth = false;
+
 
 $url_array = explode("/", $_SERVER['REDIRECT_URL']);
 if ($url_array[1] == "") {

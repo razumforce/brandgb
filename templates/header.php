@@ -41,8 +41,9 @@
         </a>
       </div>
       <div class="header__acc-button">
-        <a href="">My Account <i class="fa fa-caret-down"></i></a>
+        <a href="#">My Account <i class="fa fa-caret-down"></i></a>
       </div>
+
       <div id="header-cart" class="header_cart" style="display: none">
         <div id="header-cart-content" class="header_cart__content">
         </div>
@@ -56,6 +57,36 @@
           <a id="headcart-gotocart" href="./shoppingcart">GO TO CART</a>
         </div>
       </div>
+      
+      <div class="header_myaccount" style="display: none">
+        <?php if (!$isAuth): ?>
+        <form>
+          <label for="login">Login</label><br>
+          <input type="text" name="login"><br>
+          <label for="password">Password</label><br>
+          <input type="text" name="password"><br>
+          <input type="checkbox" name="rememberme">
+          <label for="rememberme">Remember me</label>
+          <input type="submit" value="Sign in">
+        </form>
+        <a href="#">Forgot password?</a>
+        <div>
+          <a href="#">Register</a>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($isAuth): ?>
+        <div>Welcome,</div>
+        <div><?=$_SESSION['login'] ?></div>
+        <div>
+          <a href="#">Go to profile</a>
+        </div>
+        <div>
+          <a href="#">Logout</a>
+        </div>
+        <?php endif; ?>
+      </div>
+
     </div>
   </div>
 </header>
