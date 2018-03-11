@@ -12,13 +12,15 @@
 
 function auth()
 {
-	$isAuth = 0;
+	$isAuth = false;
 
-
+	
 	// var_dump($_SESSION['login']);
 	// echo '<br>';
+
 	// var_dump($_SESSION['id_user']);
 	// echo '<br>';
+
 	// var_dump($_SESSION['IdUserSession']);
 	// echo '<br>';
 	// var_dump($_COOKIE);
@@ -35,14 +37,6 @@ function auth()
 	//	echo "авторизация по cookie";
 	}
 	
-	if ($isAuth)
-	{
-		$id_user = $_SESSION['IdUserSession'];
-		$sql = "select * from users where id_user = (select user_id from users_auth where hash_cookie = '$id_user')";
-		$isAuth = getRowResult($sql, $link);
-	}
-
-
 	// var_dump(password_hash('aaaaaa', PASSWORD_DEFAULT));
 	// echo '<br>';
 
@@ -56,7 +50,7 @@ function auth()
 function checkAuthWithSession($IdUserSession)
 {
 
-	$isAuth = 0;
+	$isAuth = false;
 
 	$link = getConnection();
 	$hash_cookie = mysqli_real_escape_string($link, $IdUserSession);
@@ -68,11 +62,11 @@ function checkAuthWithSession($IdUserSession)
 	{
 		$_SESSION['login'] = $user_date['login'];
 		$_SESSION['IdUserSession'] = $IdUserSession;
-		$isAuth = 1;
+		$isAuth = true;
 	}
 	else
 	{
-		$isAuth = 0;
+		$isAuth = false;
 		// UserExit(); // не совсем понятно зачем делать UserExit() ??? мы же вроде не делаем Logout???
 	}
 	
@@ -81,7 +75,7 @@ function checkAuthWithSession($IdUserSession)
 
 function checkAuthWithCookie()
 {
-	$isAuth = 0;
+	$isAuth = false;
 
 	$link = getConnection();
 	$idUserCookie = $_COOKIE['idUserCookie'];
@@ -91,12 +85,12 @@ function checkAuthWithCookie()
 	
 	if ($user_date)
 	{
-		checkAuthWithSession($idUserCookie);
-		$isAuth = 1;
+		$isAuth = checkAuthWithSession($idUserCookie);
+		$isAuth = true;
 	}
 	else
 	{
-		$isAuth = 0;
+		$isAuth = false;
 		// UserExit(); // не совсем понятно зачем делать UserExit() ??? мы же вроде не делаем Logout???
 	}
 

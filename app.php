@@ -6,10 +6,11 @@ require_once('../engine/functions.php');
 require_once('../engine/db.php');
 require_once('../engine/authorize.php');
 
-// echo "<pre>";
-// print_r($_SERVER);
-// print_r($_GET);
-// echo "</pre>";
+echo "<pre>";
+print_r($_SESSION);
+echo "<br>" . "COOKIES";
+print_r($_COOKIE['basket']);
+echo "</pre>";
 
 $isAuth = auth();
 

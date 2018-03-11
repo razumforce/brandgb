@@ -15,7 +15,8 @@ function addItemToBasket(event) {
     var color = $('#single-item-color>div>span:first-child').html().match(/#.{6}/)[0];
     var size = $('#single-item-size>div>span:first-child').text();
     var qty = $('#single-item-qty>div>input').val();
-    event.data.add(id, color, size, qty);
+    var shipping = 'FREE';
+    event.data.add(id, color, size, qty, shipping);
   }
 }
 

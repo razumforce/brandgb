@@ -21,9 +21,13 @@ function Basket($rootMain, $rootHeader) {
 
 
 Basket.prototype.collectBasketItems = function () {
-  $.get({
-      url: './api/get-basket.php?request=read',
+  $.ajax({
+      type: 'post',
+      url: './api/get-basket.php',
       dataType: 'json',
+      data: {
+        request: 'read'
+      },
       success: function (data) {
           console.log(data);
           this.subtotal = data.subtotal;
@@ -77,12 +81,33 @@ Basket.prototype.refresh = function () {
 };
 
 
-Basket.prototype.add = function (id, color, size, qty) {
+Basket.prototype.add = function (id, color, size, qty, shipping) {
   console.log('add started!', id, color, size, qty);
-  $('#info-dialog').attr('title', 'Add item to basket');
-  $('#info-dialog').html('ID ' + id + ', COLOR CODE: ' + color + ', SIZE: ' + size + ', Q-TY: ' + qty);
-  $('#info-dialog').dialog();
+  // $('#info-dialog').attr('title', 'Add item to basket');
+  // $('#info-dialog').html('ID ' + id + ', COLOR CODE: ' + color + ', SIZE: ' + size + ', Q-TY: ' + qty);
+  // $('#info-dialog').dialog();
+  console.log('./api/get-basket.php?request=add&id=' + id + '&color=' + color + '&size=' + size + '&quantity=' + qty);
 
+  $.ajax({
+    type: 'post',
+    url: './api/get-basket.php',
+    dataType: 'json',
+    data: {
+      request: 'add',
+      id: id,
+      color: color,
+      size: size,
+      quantity: qty,
+      shipping: shipping
+    },
+    success: function(data) {
+      console.log(data);
+      this.collectBasketItems();
+      this.refresh();
+      console.log(this.basketItems);
+    },
+    context: this
+  });
   //
   // SEND to server by $.post - {"id": id}
   // if result === true - then make below code (collectBasketItems and refresh)
@@ -90,9 +115,6 @@ Basket.prototype.add = function (id, color, size, qty) {
   // ВСЕ ОПЕРАЦИИ ПО ДОБАВЛЕНИЮ ТОВАРА В КОРЗИНУ - НА СТОРОНЕ СЕРВЕРА!!!
   //
 
-  this.collectBasketItems();
-  this.refresh();
-  console.log(this.basketItems);
 };
 
 Basket.prototype.delete = function (id) {

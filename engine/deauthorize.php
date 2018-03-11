@@ -35,6 +35,8 @@ function userLogout()
 	//Удаляем все переменные cookie
 	setcookie('idUserCookie','', time() - 3600 * 24 * 7);
 
+	session_destroy();
+
 	return $isAuth = 0;
 }
 

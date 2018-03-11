@@ -11,12 +11,6 @@ $(document).ready(function() {
     $('#header-search-browse>div>span:first-child').on('change', loadBrowseInput);
   }
 
-// код для My Account на всех страницах
-
-  if($('.header__acc-button').length != 0) {
-    $('.header__acc-button').on('click', toggleMyAccount);
-  }
-
 // код для HEADER MENU на всех страницах
 
   var menuHeader = new Menu();
@@ -30,6 +24,13 @@ $(document).ready(function() {
   $('.styled-drop_box').on('click', 'li', selectStyledDropBox);
 
   // $('.styled-drop_box').on('click', 'i.fa', toggleStyledDropBox);
+
+// код для My Account на всех страницах
+
+  if($('.header__acc-button').length != 0) {
+    $('.header__acc-button').on('click', toggleMyAccount);
+    $('.header_myaccount').on('change', basket, refreshBasket);
+  }
 
 // код для страницы index.html
 
@@ -110,6 +111,10 @@ function deleteItemFromBasket(event) {
   } else {
     event.data.delete(id);
   }
+}
+
+function refreshBasket(event) {
+  event.data.collectBasketItems();
 }
 
 function basketPicEnterHandler() {
@@ -229,10 +234,11 @@ function userLogin(){
                 setTimeout(function() {
                   $('.header_myaccount').slideToggle();
                 }, 1500);
+                $('.header_myaccount').trigger('change');
               }
             }
           });
-};
+}
 
 function userLogout(){
   $.ajax({
@@ -247,6 +253,7 @@ function userLogout(){
           $('.header_myaccount').html(response);
         });
       }, 1500);
+      $('.header_myaccount').trigger('change');
     }
   });
-};
+}
