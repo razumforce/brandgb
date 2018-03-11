@@ -234,6 +234,17 @@ function userLogin(){
                 setTimeout(function() {
                   $('.header_myaccount').slideToggle();
                 }, 1500);
+                $.ajax({
+                  type: 'post',
+                  dataType: 'json',
+                  url: './api/get-basket.php',
+                  data: {
+                    request: 'merge'
+                  },
+                  success: function(response) {
+                    console.log('BASKET COOKIE CLEARED!');
+                  }
+                });
                 $('.header_myaccount').trigger('change');
               }
             }

@@ -53,6 +53,10 @@ switch ($operation) {
     addToBasket($basket, $item, $user_id);
   break;
 
+  case 'merge':
+    mergeBaskets($basket, $user_id);
+  break;
+
   case 'delete':
     $itemId = $_POST['id'];
     deleteFromBasket($basket, $itemId, $user_id);
@@ -101,8 +105,49 @@ left join (select * from photos where type = 0) as ph on ph.item_id = items.id_i
   return getAssocResult($sql);
 }
 
-function insertIntoBasketDB($item, $user_id) {
+function getIdValues($color, $size, $shipping) {
+  $sqlColor = "select colors.id_color as color from colors where colors.code = '$color';";
+  $sqlSize = "select sizes.id_size as size from sizes where sizes.name = '$size';";
+  $sqlShipping = "select shipping.id_shipping as shipping from shipping where shipping.name = '$shipping';";
 
+  $result = [ 'color' => getAssocResult($sqlColor)[0]['color'],
+              'size' => getAssocResult($sqlSize)[0]['size'],
+              'shipping' => getAssocResult($sqlShipping)[0]['shipping']];
+
+  return $result;
+}
+
+function insertIntoBasketDB($item, $user_id) {
+  $idValues = getIdValues($item['color'], $item['size'], $item['shipping']);
+  $itemId = $item['id'];
+  $itemColorId = $idValues['color'];
+  $itemSizeId = $idValues['size'];
+  $itemShippingId = $idValues['shipping'];
+  $itemQuantity = $item['quantity'];
+  $sql = "insert into basket values ('$itemId', '$itemColorId', '$itemSizeId', '$itemQuantity', '$itemShippingId', '$user_id');";
+  if(!executeQuery($sql)) {
+    $sql = "update basket set quantity = quantity + '$itemQuantity' where user_id = '$user_id' and item_id = '$itemId';";
+    executeQuery($sql);
+  }
+  return true;
+}
+
+function insertIntoBasket($currentBasket, $item) {
+  $idKey = null;
+  foreach($currentBasket as $key => $row) {
+    if ($row['id'] == $item['id'] && $row['color'] == $item['color'] && $row['size'] == $item['size'] && $row['shipping'] == $item['shipping']) {
+      $idKey = $key;
+      break;
+    }
+  }
+  
+  if (!is_null($idKey)) {
+    $currentBasket[$idKey]['quantity'] += $item['quantity'];
+  } else {
+    $currentBasket[] = $item;
+  }
+
+  return $currentBasket;
 }
 
 function getBasketFromCookies() {
@@ -165,12 +210,22 @@ function readBasket($basket, $user_id) {
 function addToBasket($basket, $item, $user_id) {
   if (is_null($user_id)) {
     $currentBasket = json_decode($_COOKIE['basket'], true);
-    $currentBasket[] = $item;
+    $currentBasket = insertIntoBasket($currentBasket, $item);
     setcookie('basket', json_encode($currentBasket), time() + 3600 * 24 * 30, '/');
   } else {
-    insertIntoBasketDB($item, $user_id);
+    $res = insertIntoBasketDB($item, $user_id);
   }
-  echo json_encode($currentBasket);
+  echo json_encode($res);
+}
+
+function mergeBaskets($basket, $user_id) {
+  if (!is_null($user_id)) {
+    $currentBasket = json_decode($_COOKIE['basket'], true);
+    foreach ($currentBasket as $row) {
+      insertIntoBasketDB($row, $user_id);
+    }
+    setcookie('basket', "", time() - 3600, '/');
+  }
 }
 
 ?>
