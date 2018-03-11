@@ -59,32 +59,7 @@
       </div>
       
       <div class="header_myaccount" style="display: none">
-        <?php if (!$isAuth): ?>
-        <form>
-          <label for="login">Login</label><br>
-          <input type="text" name="login"><br>
-          <label for="password">Password</label><br>
-          <input type="text" name="password"><br>
-          <input type="checkbox" name="rememberme">
-          <label for="rememberme">Remember me</label>
-          <input type="submit" value="Sign in">
-        </form>
-        <a href="#">Forgot password?</a>
-        <div>
-          <a href="#">Register</a>
-        </div>
-        <?php endif; ?>
-
-        <?php if ($isAuth): ?>
-        <div>Welcome,</div>
-        <div><?=$_SESSION['login'] ?></div>
-        <div>
-          <a href="#">Go to profile</a>
-        </div>
-        <div>
-          <a href="#">Logout</a>
-        </div>
-        <?php endif; ?>
+        <?php include 'header-auth.php'; ?>
       </div>
 
     </div>

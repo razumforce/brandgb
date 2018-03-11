@@ -206,5 +206,47 @@ function searchBrowseItem(event) {
 }
 
 function toggleMyAccount(event) {
-  $('.header_myaccount').toggle();
+  $('.header_myaccount').slideToggle();
 }
+
+function userLogin(){
+  var login = $('#myaccount-login').val();
+  var password = $('#myaccount-password').val();
+  var rememberme = $('#myaccount-rememberme').prop('checked');
+          $.ajax({
+            type: 'post',
+            dataType: "json",
+            url: '/api/login.php',
+            data: {
+              login: login,
+              password: password,
+              rememberme: rememberme
+            },
+            success: function(response) {
+              console.log(response);
+              $('.header_myaccount').html(response.html);
+              if (response.result) {
+                setTimeout(function() {
+                  $('.header_myaccount').slideToggle();
+                }, 1500);
+              }
+            }
+          });
+};
+
+function userLogout(){
+  $.ajax({
+    type: 'post',
+    dataType: "json",
+    url: '/api/logout.php',
+    success: function(response) {
+      console.log(response);
+      $('.header_myaccount').html('Logout Successful!');
+      setTimeout(function() {
+        $('.header_myaccount').slideToggle(function() {
+          $('.header_myaccount').html(response);
+        });
+      }, 1500);
+    }
+  });
+};

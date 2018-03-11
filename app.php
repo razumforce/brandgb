@@ -1,15 +1,17 @@
 <?php
+session_start();
 
 require_once('../config/config.php');
 require_once('../engine/functions.php');
 require_once('../engine/db.php');
+require_once('../engine/authorize.php');
 
 // echo "<pre>";
 // print_r($_SERVER);
 // print_r($_GET);
 // echo "</pre>";
 
-$isAuth = false;
+$isAuth = auth();
 
 
 $url_array = explode("/", $_SERVER['REDIRECT_URL']);
