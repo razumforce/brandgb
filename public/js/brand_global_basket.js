@@ -82,11 +82,7 @@ Basket.prototype.refresh = function () {
 
 
 Basket.prototype.add = function (id, color, size, qty, shipping) {
-  console.log('add started!', id, color, size, qty);
-  // $('#info-dialog').attr('title', 'Add item to basket');
-  // $('#info-dialog').html('ID ' + id + ', COLOR CODE: ' + color + ', SIZE: ' + size + ', Q-TY: ' + qty);
-  // $('#info-dialog').dialog();
-  console.log('./api/get-basket.php?request=add&id=' + id + '&color=' + color + '&size=' + size + '&quantity=' + qty);
+  console.log('add started!', id, color, size, qty, shipping);
 
   $.ajax({
     type: 'post',
@@ -101,6 +97,34 @@ Basket.prototype.add = function (id, color, size, qty, shipping) {
       shipping: shipping
     },
     success: function(data) {
+      this.collectBasketItems();
+      this.refresh();
+    },
+    context: this
+  });
+  //
+  // SEND to server by $.post - {"id": id}
+  // if result === true - then make below code (collectBasketItems and refresh)
+  // if result === false - then err handler
+  // ВСЕ ОПЕРАЦИИ ПО ДОБАВЛЕНИЮ ТОВАРА В КОРЗИНУ - НА СТОРОНЕ СЕРВЕРА!!!
+  //
+};
+
+Basket.prototype.delete = function (id, cid, sid, shid) {
+  console.log('delete started!', id, cid, sid, shid);
+
+  $.ajax({
+    type: 'post',
+    url: './api/get-basket.php',
+    dataType: 'json',
+    data: {
+      request: 'delete',
+      id: id,
+      cid: cid,
+      sid: sid,
+      shid: shid
+    },
+    success: function(data) {
       console.log(data);
       this.collectBasketItems();
       this.refresh();
@@ -112,27 +136,8 @@ Basket.prototype.add = function (id, color, size, qty, shipping) {
   // SEND to server by $.post - {"id": id}
   // if result === true - then make below code (collectBasketItems and refresh)
   // if result === false - then err handler
-  // ВСЕ ОПЕРАЦИИ ПО ДОБАВЛЕНИЮ ТОВАРА В КОРЗИНУ - НА СТОРОНЕ СЕРВЕРА!!!
-  //
-
-};
-
-Basket.prototype.delete = function (id) {
-    console.log('delete started!', id);
-    $('#info-dialog').attr('title', 'Delete item from basket!');
-    $('#info-dialog').html('ID ' + id);
-    $('#info-dialog').dialog();
-
-  //
-  // SEND to server by $.post - {"id": id}
-  // if result === true - then make below code (collectBasketItems and refresh)
-  // if result === false - then err handler
   // ВСЕ ОПЕРАЦИИ ПО УДАЛЕНИЮ ТОВАРА ИЗ КОРЗИНЫ - НА СТОРОНЕ СЕРВЕРА!!!
   //
-
-  this.collectBasketItems();
-  this.refresh();
-  console.log(this.basketItems);
 };
 
 
@@ -147,6 +152,9 @@ Basket.prototype.showMainItem = function(item, $parent) {
   });
 
   $mainDiv.attr('data-id', item.id);
+  $mainDiv.attr('data-cid', item.color_id);
+  $mainDiv.attr('data-sid', item.size_id);
+  $mainDiv.attr('data-shid', item.shipping_id);
   
   var $innerDiv = $('<div />', {
       class: 'shopcart-main__main_det'
@@ -247,6 +255,9 @@ Basket.prototype.showHeaderItem = function(item, $parent) {
   });
 
   $mainDiv.attr('data-id', item.id);
+  $mainDiv.attr('data-cid', item.color_id);
+  $mainDiv.attr('data-sid', item.size_id);
+  $mainDiv.attr('data-shid', item.shipping_id);
 
   var $itemImg = $('<img>', {
       src: item.pic,

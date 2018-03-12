@@ -109,7 +109,12 @@ function deleteItemFromBasket(event) {
   if (typeof id === 'undefined' || id === '') {
     console.log('no data-id!!!'); // вообще-то ИЗБЫТОЧНО. в корзине по опредению должно быть data-id
   } else {
-    event.data.delete(id);
+    var cid = $(event.currentTarget).parent().parent().attr('data-cid');
+    console.log(cid);
+    var sid = $(event.currentTarget).parent().parent().attr('data-sid');
+    var shid = $(event.currentTarget).parent().parent().attr('data-shid');
+    console.log('XXX delete started!', id, cid, sid, shid);
+    event.data.delete(id, cid, sid, shid);
   }
 }
 
@@ -231,6 +236,7 @@ function userLogin(){
               console.log(response);
               $('.header_myaccount').html(response.html);
               if (response.result) {
+                $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
                 setTimeout(function() {
                   $('.header_myaccount').slideToggle();
                 }, 1500);
@@ -258,6 +264,7 @@ function userLogout(){
     url: '/api/logout.php',
     success: function(response) {
       console.log(response);
+      $('.header__acc-button>a').html('Sign in <i class="fa fa-caret-down"></i>');
       $('.header_myaccount').html('Logout Successful!');
       setTimeout(function() {
         $('.header_myaccount').slideToggle(function() {

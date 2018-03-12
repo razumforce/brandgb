@@ -64,10 +64,10 @@ inner join materials on items.material_id = materials.id_material
 inner join designers on items.designer_id = designers.id_designer
 where items.id_item = $id;";
 
-	$sqlColors = "select colors.code as color_code, colors.name as color_name
+	$sqlColors = "select colors.id_color as id_color, colors.code as color_code, colors.name as color_name
 from items_colors inner join colors on items_colors.color_id = colors.id_color where items_colors.item_id = $id;";
 
-	$sqlSizes = "select sizes.name
+	$sqlSizes = "select sizes.id_size as id_size, sizes.name
 from items_sizes inner join sizes on items_sizes.size_id = sizes.id_size where items_sizes.item_id = $id;";
 
 	$sqlPics = "select url, type from photos where type <> 0 and item_id = $id;";

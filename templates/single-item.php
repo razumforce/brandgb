@@ -28,12 +28,12 @@
         <div for="item-color" class="single-item__item-choice_type-title">CHOOSE COLOR</div>
         <div id="single-item-color" class="styled-drop_box">
           <div>
-            <span><i class="fa fa-square" style="color: <?=$content['single_item']['color'][0]['color_code'];?>"></i>&nbsp;&nbsp;&nbsp;<?=$content['single_item']['color'][0]['color_name'];?></span>
-            <span><i class="fa fa-caret-down"></i></span>
+            <span><span data-cid="<?=$content['single_item']['color'][0]['id_color']; ?>"><i class="fa fa-square" style="color: <?=$content['single_item']['color'][0]['color_code'];?>"></i>&nbsp;&nbsp;&nbsp;<?=$content['single_item']['color'][0]['color_name'];?></span>
+            <span><i class="fa fa-caret-down"></i></span></span>
           </div>
           <ul>
             <?php foreach ($content['single_item']['color'] as $key => $color): ?>
-              <li><i class="fa fa-square" style="color: <?=$content['single_item']['color'][$key]['color_code'];?>"></i>&nbsp;&nbsp;&nbsp;<?=$content['single_item']['color'][$key]['color_name'];?></li>
+              <li><span data-cid="<?=$content['single_item']['color'][$key]['id_color']; ?>"><i class="fa fa-square" style="color: <?=$content['single_item']['color'][$key]['color_code'];?>"></i>&nbsp;&nbsp;&nbsp;<?=$content['single_item']['color'][$key]['color_name'];?></span></li>
             <?php endforeach; ?>
           </ul>
         </div>  
@@ -43,12 +43,12 @@
         <div for="item-size" class="single-item__item-choice_type-title">CHOOSE SIZE</div>
         <div id="single-item-size" class="styled-drop_box">
           <div>
-            <span><?=$content['single_item']['size'][0]['name'];?></span>
+            <span><span data-sid="<?=$content['single_item']['size'][0]['id_size']; ?>"><?=$content['single_item']['size'][0]['name'];?></span></span>
             <span><i class="fa fa-caret-down"></i></span>
           </div>
           <ul>
             <?php foreach ($content['single_item']['size'] as $key => $size): ?>
-              <li><?=$content['single_item']['size'][$key]['name'];?></li>
+              <li><span data-sid="<?=$content['single_item']['size'][$key]['id_size']; ?>"><?=$content['single_item']['size'][$key]['name'];?></span></li>
             <?php endforeach; ?>
           </ul>
         </div>  

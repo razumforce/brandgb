@@ -41,7 +41,12 @@
         </a>
       </div>
       <div class="header__acc-button">
+        <?php if (!$isAuth): ?>
+        <a href="#">Sign in <i class="fa fa-caret-down"></i></a>
+        <?php endif; ?>
+        <?php if ($isAuth): ?>
         <a href="#">My Account <i class="fa fa-caret-down"></i></a>
+        <?php endif; ?>
       </div>
 
       <div id="header-cart" class="header_cart" style="display: none">

@@ -50,16 +50,21 @@ switch ($operation) {
       "quantity" => $_POST['quantity'],
       "shipping" => $_POST['shipping']
     ];
-    addToBasket($basket, $item, $user_id);
+    addToBasket($item, $user_id);
   break;
 
   case 'merge':
-    mergeBaskets($basket, $user_id);
+    mergeBaskets($user_id);
   break;
 
   case 'delete':
-    $itemId = $_POST['id'];
-    deleteFromBasket($basket, $itemId, $user_id);
+    $item = [
+      "id" => $_POST['id'],
+      "color" => $_POST['cid'],
+      "size" => $_POST['sid'],
+      "shipping" => $_POST['shid']
+    ];
+    deleteFromBasket($item, $user_id);
   break;
 
   default:
@@ -70,106 +75,7 @@ switch ($operation) {
 }
 
 
-
-
-function getBasketContentDB($user_id)
-{
-  $sql = "select
-basket.user_id,
-basket.item_id,
-basket.quantity,
-items.name as items_name,
-items.price,
-items.rating,
-colors.name as colors_name,
-sizes.name as sizes_name,
-shipping.name as shipping_name,
-ph.url
-from basket inner join items on basket.item_id = items.id_item
-inner join colors on basket.color_id = colors.id_color
-inner join sizes on basket.size_id = sizes.id_size
-inner join shipping on basket.shipping_id = shipping.id_shipping
-left join (select * from photos where type = 0) as ph on ph.item_id = basket.item_id where basket.user_id = '$user_id';";
-  return getAssocResult($sql);
-}
-
-function getItemDetailsFromDB($id)
-{
-  $sql = "select
-items.name as items_name,
-items.price,
-items.rating,
-ph.url
-from items 
-left join (select * from photos where type = 0) as ph on ph.item_id = items.id_item where items.id_item = '$id';";
-  return getAssocResult($sql);
-}
-
-function getIdValues($color, $size, $shipping) {
-  $sqlColor = "select colors.id_color as color from colors where colors.code = '$color';";
-  $sqlSize = "select sizes.id_size as size from sizes where sizes.name = '$size';";
-  $sqlShipping = "select shipping.id_shipping as shipping from shipping where shipping.name = '$shipping';";
-
-  $result = [ 'color' => getAssocResult($sqlColor)[0]['color'],
-              'size' => getAssocResult($sqlSize)[0]['size'],
-              'shipping' => getAssocResult($sqlShipping)[0]['shipping']];
-
-  return $result;
-}
-
-function insertIntoBasketDB($item, $user_id) {
-  $idValues = getIdValues($item['color'], $item['size'], $item['shipping']);
-  $itemId = $item['id'];
-  $itemColorId = $idValues['color'];
-  $itemSizeId = $idValues['size'];
-  $itemShippingId = $idValues['shipping'];
-  $itemQuantity = $item['quantity'];
-  $sql = "insert into basket values ('$itemId', '$itemColorId', '$itemSizeId', '$itemQuantity', '$itemShippingId', '$user_id');";
-  if(!executeQuery($sql)) {
-    $sql = "update basket set quantity = quantity + '$itemQuantity' where user_id = '$user_id' and item_id = '$itemId';";
-    executeQuery($sql);
-  }
-  return true;
-}
-
-function insertIntoBasket($currentBasket, $item) {
-  $idKey = null;
-  foreach($currentBasket as $key => $row) {
-    if ($row['id'] == $item['id'] && $row['color'] == $item['color'] && $row['size'] == $item['size'] && $row['shipping'] == $item['shipping']) {
-      $idKey = $key;
-      break;
-    }
-  }
-  
-  if (!is_null($idKey)) {
-    $currentBasket[$idKey]['quantity'] += $item['quantity'];
-  } else {
-    $currentBasket[] = $item;
-  }
-
-  return $currentBasket;
-}
-
-function getBasketFromCookies() {
-  $currentBasket = json_decode($_COOKIE['basket'], true);
-  $basketFullData = [];
-  foreach ($currentBasket as $row) {
-    $itemDetails = getItemDetailsFromDB($row['id']);
-    $item = [
-      "item_id" => $row['id'], //
-      "colors_name" => $row['color'], //
-      "sizes_name" => $row['size'], //
-      "quantity" => $row['quantity'], //
-      "shipping_name" => $row['shipping'], //
-      "items_name" => $itemDetails[0]['items_name'],
-      "price" => $itemDetails[0]['price'],
-      "url" => $itemDetails[0]['url'],
-      "rating" => $itemDetails[0]['rating'] / 2
-    ];
-    $basketFullData[] = $item;
-  }
-  return $basketFullData;
-}
+// MAIN FUNCTIONS for CRUD
 
 function readBasket($basket, $user_id) {
   if (is_null($user_id)) {
@@ -184,12 +90,15 @@ function readBasket($basket, $user_id) {
   foreach ($basketContent as $row) {
     $item = [
       "id" => $row['item_id'], //
+      "color_id" => $row['id_color'],
       "name" => $row['items_name'],
       "color" => $row['colors_name'], //
       "size" => $row['sizes_name'], //
+      "size_id" => $row['id_size'],
       "price" => '$' . $row['price'],
       "quantity" => $row['quantity'], //
       "shipping" => $row['shipping_name'],
+      "shipping_id" => $row['id_shipping'],
       "amount" => '$' . $row['price'] * $row['quantity'],
       "pic" => $row['url'],
       "rating" => $row['rating'] / 2
@@ -207,10 +116,10 @@ function readBasket($basket, $user_id) {
   // echo json_encode($basketContent);
 }
 
-function addToBasket($basket, $item, $user_id) {
+function addToBasket($item, $user_id) {
   if (is_null($user_id)) {
     $currentBasket = json_decode($_COOKIE['basket'], true);
-    $currentBasket = insertIntoBasket($currentBasket, $item);
+    $currentBasket = insertIntoBasketCK($currentBasket, $item);
     setcookie('basket', json_encode($currentBasket), time() + 3600 * 24 * 30, '/');
   } else {
     $res = insertIntoBasketDB($item, $user_id);
@@ -218,7 +127,18 @@ function addToBasket($basket, $item, $user_id) {
   echo json_encode($res);
 }
 
-function mergeBaskets($basket, $user_id) {
+function deleteFromBasket($item, $user_id) {
+  if (is_null($user_id)) {
+    $currentBasket = json_decode($_COOKIE['basket'], true);
+    $currentBasket = deleteFromBasketCK($currentBasket, $item);
+    setcookie('basket', json_encode($currentBasket), time() + 3600 * 24 * 30, '/');
+  } else {
+    $res = deleteFromBasketDB($item, $user_id);
+  }
+  echo json_encode($res);
+}
+
+function mergeBaskets($user_id) {
   if (!is_null($user_id)) {
     $currentBasket = json_decode($_COOKIE['basket'], true);
     foreach ($currentBasket as $row) {
@@ -227,5 +147,151 @@ function mergeBaskets($basket, $user_id) {
     setcookie('basket', "", time() - 3600, '/');
   }
 }
+
+
+
+// helper functions
+
+
+function getBasketContentDB($user_id)
+{
+  $sql = "select
+basket.user_id,
+basket.item_id,
+basket.quantity,
+items.name as items_name,
+items.price,
+items.rating,
+colors.name as colors_name,
+colors.id_color,
+sizes.name as sizes_name,
+sizes.id_size,
+shipping.name as shipping_name,
+shipping.id_shipping,
+ph.url
+from basket inner join items on basket.item_id = items.id_item
+inner join colors on basket.color_id = colors.id_color
+inner join sizes on basket.size_id = sizes.id_size
+inner join shipping on basket.shipping_id = shipping.id_shipping
+left join (select * from photos where type = 0) as ph on ph.item_id = basket.item_id where basket.user_id = '$user_id';";
+  return getAssocResult($sql);
+}
+
+function getBasketFromCookies() {
+  $currentBasket = json_decode($_COOKIE['basket'], true);
+  $basketFullData = [];
+  foreach ($currentBasket as $row) {
+    $itemDetails = getItemDetailsFromDB($row['id']);
+    $detailsByName = getDetailsByName($row['color'], $row['size'], $row['shipping']);
+    $item = [
+      "item_id" => $row['id'], //
+      "colors_name" => $detailsByName['colors_name'], //
+      "id_color" => $row['color'],
+      "sizes_name" => $detailsByName['sizes_name'], //
+      "id_size" => $row['size'],
+      "quantity" => $row['quantity'], //
+      "shipping_name" => $detailsByName['shipping_name'], //
+      "id_shipping" => $row['shipping'],
+      "items_name" => $itemDetails[0]['items_name'],
+      "price" => $itemDetails[0]['price'],
+      "url" => $itemDetails[0]['url'],
+      "rating" => $itemDetails[0]['rating'] / 2
+    ];
+    $basketFullData[] = $item;
+  }
+  return $basketFullData;
+}
+
+function getItemDetailsFromDB($id)
+{
+  $sql = "select
+items.name as items_name,
+items.price,
+items.rating,
+ph.url
+from items 
+left join (select * from photos where type = 0) as ph on ph.item_id = items.id_item where items.id_item = '$id';";
+  return getAssocResult($sql);
+}
+
+function getDetailsByName($colorId, $sizeId, $shippingId) {
+  $sql = "select colors.name as colors_name, sizes.name as sizes_name, shipping.name as shipping_name
+from colors, sizes, shipping where id_color = '$colorId' and id_size = '$sizeId' and id_shipping = '$shippingId';";
+  
+  $result = getAssocResult($sql)[0];
+
+  return $result;
+}
+
+function deleteFromBasketCK($currentBasket, $item) {
+  $idKey = null;
+  foreach($currentBasket as $key => $row) {
+    if ($row['id'] == $item['id'] && $row['color'] == $item['color'] && $row['size'] == $item['size'] && $row['shipping'] == $item['shipping']) {
+      $idKey = $key;
+      break;
+    }
+  }
+
+  if (!is_null($idKey) && $currentBasket[$idKey]['quantity'] > 1) {
+    $currentBasket[$idKey]['quantity']--;
+  } else {
+    unset($currentBasket[$idKey]);
+  }
+
+  return $currentBasket;
+}
+
+function deleteFromBasketDB($item, $user_id) {
+
+  $itemId = $item['id'];
+  $itemColorId = $item['color'];
+  $itemSizeId = $item['size'];
+  $itemShippingId = $item['shipping'];
+  $sqlCheckQuantity = "select quantity from basket where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId';";
+
+  $currentQuantity = getAssocResult($sqlCheckQuantity)[0]['quantity'];
+
+  if (is_null($currentQuantity) || $currentQuantity == 1) {
+    $sql = "delete from basket where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId';";
+  } else {
+    $sql = "update basket set quantity = quantity - 1 where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId';";
+  }
+  
+  return executeQuery($sql);
+}
+
+function insertIntoBasketDB($item, $user_id) {
+  $itemId = $item['id'];
+  $itemColorId = $item['color'];
+  $itemSizeId = $item['size'];
+  $itemShippingId = $item['shipping'];
+  $itemQuantity = $item['quantity'];
+  $sql = "insert into basket values ('$itemId', '$itemColorId', '$itemSizeId', '$itemQuantity', '$itemShippingId', '$user_id');";
+  if(!executeQuery($sql)) {
+    $sql = "update basket set quantity = quantity + '$itemQuantity' where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId';";
+    executeQuery($sql);
+  }
+  return true;
+}
+
+function insertIntoBasketCK($currentBasket, $item) {
+  $idKey = null;
+  foreach($currentBasket as $key => $row) {
+    if ($row['id'] == $item['id'] && $row['color'] == $item['color'] && $row['size'] == $item['size'] && $row['shipping'] == $item['shipping']) {
+      $idKey = $key;
+      break;
+    }
+  }
+  
+  if (!is_null($idKey)) {
+    $currentBasket[$idKey]['quantity'] += $item['quantity'];
+  } else {
+    $currentBasket[] = $item;
+  }
+
+  return $currentBasket;
+}
+
+
 
 ?>

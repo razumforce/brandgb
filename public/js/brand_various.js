@@ -12,10 +12,10 @@ function addItemToBasket(event) {
   if (typeof id === 'undefined' || id === '') {
     console.log('no data-id!!!');
   } else {
-    var color = $('#single-item-color>div>span:first-child').html().match(/#.{6}/)[0];
-    var size = $('#single-item-size>div>span:first-child').text();
+    var color = $('#single-item-color>div>span:first-child>span').attr('data-cid');
+    var size = $('#single-item-size>div>span:first-child>span').attr('data-sid');
     var qty = $('#single-item-qty>div>input').val();
-    var shipping = 'FREE';
+    var shipping = '1'; // for future - 'data-shid', from dropbox
     event.data.add(id, color, size, qty, shipping);
   }
 }
