@@ -242,30 +242,35 @@ function userLogin() {
       $('.header_myaccount').html(response.html);
       if (response.result) {
         $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
-        setTimeout(function() {
-          $('.header_myaccount').slideToggle();
-        }, 1500);
-        $.ajax({
-          type: 'post',
-          dataType: 'json',
-          url: './api/get-basket.php',
-          data: {
-            request: 'merge'
-          },
-          success: function(response) {
-            console.log('BASKET COOKIE CLEARED!');
-          }
-        });
-        $('.header_myaccount').trigger('change');
-        $.ajax({
-          type: 'post',
-          dataType: 'json',
-          url: './api/get-checkoutstep.php',
-          data: {},
-          success: function(response) {
-            $('.checkout-steps__div').first().html(response);
-          }
-        });
+        if (window.location.pathname.split('/')[1] == 'register' || window.location.pathname.split('/')[1] == 'profile') {
+          window.location.href = './profile';
+        } else {
+          setTimeout(function() {
+            $('.header_myaccount').slideToggle();
+          }, 1500);
+          $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: './api/get-basket.php',
+            data: {
+              request: 'merge'
+            },
+            success: function(response) {
+              console.log('BASKET COOKIE CLEARED!');
+            }
+          });
+          $('.header_myaccount').trigger('change');
+          $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: './api/get-checkoutstep.php',
+            data: {},
+            success: function(response) {
+              $('.checkout-steps__div').first().html(response);
+            }
+          });
+        }
+        
       }
     }
   });
@@ -279,22 +284,26 @@ function userLogout() {
     success: function(response) {
       console.log(response);
       $('.header__acc-button>a').html('Sign in <i class="fa fa-caret-down"></i>');
-      $('.header_myaccount').html('Logout Successful!');
-      setTimeout(function() {
-        $('.header_myaccount').slideToggle(function() {
-          $('.header_myaccount').html(response);
+      if (window.location.pathname.split('/')[1] == 'profile') {
+        window.location.href = './profile';
+      } else {
+        $('.header_myaccount').html('Logout Successful!');
+        setTimeout(function() {
+          $('.header_myaccount').slideToggle(function() {
+            $('.header_myaccount').html(response);
+          });
+        }, 1500);
+        $('.header_myaccount').trigger('change');
+        $.ajax({
+          type: 'post',
+          dataType: 'json',
+          url: './api/get-checkoutstep.php',
+          data: {},
+          success: function(response) {
+            $('.checkout-steps__div').first().html(response);
+          }
         });
-      }, 1500);
-      $('.header_myaccount').trigger('change');
-      $.ajax({
-        type: 'post',
-        dataType: 'json',
-        url: './api/get-checkoutstep.php',
-        data: {},
-        success: function(response) {
-          $('.checkout-steps__div').first().html(response);
-        }
-      });
+      }
     }
   });
 }

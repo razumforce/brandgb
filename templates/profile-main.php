@@ -1,5 +1,13 @@
 <section class="profile-main">
- 
+  <?php if (!$isAuth): ?>
+  <div class="profile-main__div">
+    <div class="profile-main__title">
+      <span>Please Sign in or Register in order to view your profile</span>
+    </div>
+  </div>
+  <?php endif; ?>
+
+  <?php if ($isAuth): ?>
   <div class="profile-main__div">
     <div class="profile-main__title">
       <span>Your personal profile</span>
@@ -27,6 +35,8 @@
       </div>
     </div>
   </div>
+  <?php endif; ?> 
+  
 
 </section>
 

@@ -35,8 +35,13 @@
     <div>User name:</div>
     <div>Address:</div>
   </div>
-  <h3>GO TO NEXT STEP AND PLACE ORDER</h3>
-  <button type="button" value="" onclick="checkoutNextStep()">NEXT STEP</button>
+  <p><br></p>
+  <h3>YOUR ORDER DETAILS</h3>
+  <div>
+    <div>Items in order:</div>
+    <div>Total amount:</div>
+  </div>
+  <button type="button" value="" onclick="checkoutNextStep()">CONFIRM ORDER</button>
 </form>
 <form class="checkout-steps__div_form-alr" action="">
   
