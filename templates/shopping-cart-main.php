@@ -46,7 +46,7 @@
 -->
     <div class="shopcart-main__buttons">
       <div class="shopcart-main__buttons_big">
-        <a id="shopcart-clear-button" href="#">CLEAR SHOPPING CART</a>
+        <a id="shopcart-clear-button">CLEAR SHOPPING CART</a>
       </div>
       <div class="shopcart-main__buttons_big">
         <a id="shopcart-continue-button" href="./product">CONTINUE SHOPPING</a>

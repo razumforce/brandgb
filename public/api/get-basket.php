@@ -57,6 +57,11 @@ switch ($operation) {
     mergeBaskets($user_id);
   break;
 
+  case 'replace':
+    clearBasket($user_id);
+    mergeBaskets($user_id);
+  break;
+
   case 'delete':
     $item = [
       "id" => $_POST['id'],
@@ -65,6 +70,11 @@ switch ($operation) {
       "shipping" => $_POST['shid']
     ];
     deleteFromBasket($item, $user_id);
+  break;
+
+  case 'clearbasket':
+    clearBasket($user_id);
+    echo json_encode($res);
   break;
 
   default:
@@ -146,6 +156,15 @@ function mergeBaskets($user_id) {
     }
     setcookie('basket', "", time() - 3600, '/');
   }
+}
+
+function clearBasket($user_id) {
+  if (is_null($user_id)) {
+    setcookie('basket', "", time() - 3600, '/');
+  } else {
+    $res = clearBasketDB($user_id);
+  }
+  return $res;
 }
 
 
@@ -242,7 +261,6 @@ function deleteFromBasketCK($currentBasket, $item) {
 }
 
 function deleteFromBasketDB($item, $user_id) {
-
   $itemId = $item['id'];
   $itemColorId = $item['color'];
   $itemSizeId = $item['size'];
@@ -257,6 +275,11 @@ function deleteFromBasketDB($item, $user_id) {
     $sql = "update basket set quantity = quantity - 1 where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId';";
   }
   
+  return executeQuery($sql);
+}
+
+function clearBasketDB($user_id) {
+  $sql = "delete from basket where user_id = '$user_id';";
   return executeQuery($sql);
 }
 

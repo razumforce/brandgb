@@ -34,6 +34,14 @@ function prepareVariables($page_name)
 			$vars['content'] = '../templates/shoppingcart.php';
 		break;
 
+		case "profile":
+			$vars['content'] = '../templates/profile.php';
+		break;
+
+		case "register":
+			$vars['content'] = '../templates/register.php';
+		break;
+
 	}
 	
 	

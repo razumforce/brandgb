@@ -77,6 +77,7 @@ $(document).ready(function() {
 
   if ($('#shopcart-content').length !== 0) {
     $('#shopcart-content').on('click', '.fa-times-circle', basket, deleteItemFromBasket);
+    $('#shopcart-clear-button').on('click', basket, clearBasket);
   }
   if ($('#header-cart').length !== 0) {
     $('#header-cart').on('click', '.fa-times-circle', basket, deleteItemFromBasket);
@@ -116,6 +117,10 @@ function deleteItemFromBasket(event) {
     console.log('XXX delete started!', id, cid, sid, shid);
     event.data.delete(id, cid, sid, shid);
   }
+}
+
+function clearBasket(event) {
+  event.data.clear();
 }
 
 function refreshBasket(event) {
@@ -219,45 +224,54 @@ function toggleMyAccount(event) {
   $('.header_myaccount').slideToggle();
 }
 
-function userLogin(){
+function userLogin() {
   var login = $('#myaccount-login').val();
   var password = $('#myaccount-password').val();
   var rememberme = $('#myaccount-rememberme').prop('checked');
-          $.ajax({
-            type: 'post',
-            dataType: "json",
-            url: '/api/login.php',
-            data: {
-              login: login,
-              password: password,
-              rememberme: rememberme
-            },
-            success: function(response) {
-              console.log(response);
-              $('.header_myaccount').html(response.html);
-              if (response.result) {
-                $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
-                setTimeout(function() {
-                  $('.header_myaccount').slideToggle();
-                }, 1500);
-                $.ajax({
-                  type: 'post',
-                  dataType: 'json',
-                  url: './api/get-basket.php',
-                  data: {
-                    request: 'merge'
-                  },
-                  success: function(response) {
-                    console.log('BASKET COOKIE CLEARED!');
-                  }
-                });
-                $('.header_myaccount').trigger('change');
-              }
-            }
-          });
+  $.ajax({
+    type: 'post',
+    dataType: "json",
+    url: '/api/login.php',
+    data: {
+      login: login,
+      password: password,
+      rememberme: rememberme
+    },
+    success: function(response) {
+      console.log(response);
+      $('.header_myaccount').html(response.html);
+      if (response.result) {
+        $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
+        setTimeout(function() {
+          $('.header_myaccount').slideToggle();
+        }, 1500);
+        $.ajax({
+          type: 'post',
+          dataType: 'json',
+          url: './api/get-basket.php',
+          data: {
+            request: 'merge'
+          },
+          success: function(response) {
+            console.log('BASKET COOKIE CLEARED!');
+          }
+        });
+        $('.header_myaccount').trigger('change');
+        $.ajax({
+          type: 'post',
+          dataType: 'json',
+          url: './api/get-checkoutstep.php',
+          data: {},
+          success: function(response) {
+            $('.checkout-steps__div').first().html(response);
+          }
+        });
+      }
+    }
+  });
 }
 
-function userLogout(){
+function userLogout() {
   $.ajax({
     type: 'post',
     dataType: "json",
@@ -272,6 +286,71 @@ function userLogout(){
         });
       }, 1500);
       $('.header_myaccount').trigger('change');
+      $.ajax({
+        type: 'post',
+        dataType: 'json',
+        url: './api/get-checkoutstep.php',
+        data: {},
+        success: function(response) {
+          $('.checkout-steps__div').first().html(response);
+        }
+      });
     }
   });
+}
+
+function userLoginCheckout() {
+  var login = $('#checkout-login').val();
+  var password = $('#checkout-password').val();
+  var rememberme = false;
+  $.ajax({
+    type: 'post',
+    dataType: "json",
+    url: '/api/login.php',
+    data: {
+      login: login,
+      password: password,
+      rememberme: rememberme
+    },
+    success: function(response) {
+      console.log(response);
+      $('.header_myaccount').html(response.html);
+      if (response.result) {
+        $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
+        $.ajax({
+          type: 'post',
+          dataType: 'json',
+          url: './api/get-basket.php',
+          data: {
+            request: 'replace'
+          },
+          success: function(response) {
+            console.log('BASKET COOKIE CLEARED!');
+          }
+        });
+        $('.header_myaccount').trigger('change');
+        $.ajax({
+          type: 'post',
+          dataType: 'json',
+          url: './api/get-checkoutstep.php',
+          data: {},
+          success: function(response) {
+            $('.checkout-steps__div').first().html(response);
+          }
+        });
+      }
+    }
+  });
+}
+
+function checkoutNotRegistered() {
+  $('#info-dialog').attr('title', 'Continue button pressed');
+  $('#info-dialog').html('User NOT registered or NOT logged in!');
+  $('#info-dialog').dialog();
+}
+
+function checkoutNextStep() {
+  $('#info-dialog').attr('title', 'NEXT STEP button pressed');
+  $('#info-dialog').html('User logged in - lets go to place ORDER!');
+  $('#info-dialog').dialog();  
 }

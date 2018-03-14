@@ -10,7 +10,7 @@
 </form>
 <a href="#">Forgot password?</a>
 <div>
-  <a href="#">Register</a>
+  <a href="./register">Register</a>
 </div>
 <?php endif; ?>
 
@@ -18,7 +18,7 @@
 <div>Welcome,</div>
 <div><?=$_SESSION['login'] ?></div>
 <div>
-  <a href="#">Go to profile</a>
+  <a href="./profile">Go to profile</a>
 </div>
 <div>
   <a href="#" onclick="userLogout()">Logout</a>
