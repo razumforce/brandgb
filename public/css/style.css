@@ -1862,6 +1862,7 @@ span.product-choice__control-active {
   text-align: center; }
 
 .register-main input[type="email"],
+.register-main input[type="text"],
 .register-main input[type="password"] {
   margin-top: 7px;
   margin-bottom: 15px;
@@ -1896,12 +1897,6 @@ span.product-choice__control-active {
   margin-top: 22px;
   margin-bottom: 78px;
   outline: none; }
-
-.register-main button + span {
-  position: relative;
-  font-weight: 400;
-  margin-left: 27px;
-  top: 5px; }
 
 .register-main__div {
   display: flex;

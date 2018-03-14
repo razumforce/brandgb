@@ -224,56 +224,74 @@ function toggleMyAccount(event) {
   $('.header_myaccount').slideToggle();
 }
 
-function userLogin() {
+function userLoginHeader() {
   var login = $('#myaccount-login').val();
   var password = $('#myaccount-password').val();
   var rememberme = $('#myaccount-rememberme').prop('checked');
-  $.ajax({
-    type: 'post',
-    dataType: "json",
-    url: '/api/login.php',
-    data: {
-      login: login,
-      password: password,
-      rememberme: rememberme
-    },
-    success: function(response) {
-      console.log(response);
-      $('.header_myaccount').html(response.html);
-      if (response.result) {
-        $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
-        if (window.location.pathname.split('/')[1] == 'register' || window.location.pathname.split('/')[1] == 'profile') {
-          window.location.href = './profile';
-        } else {
-          setTimeout(function() {
-            $('.header_myaccount').slideToggle();
-          }, 1500);
-          $.ajax({
-            type: 'post',
-            dataType: 'json',
-            url: './api/get-basket.php',
-            data: {
-              request: 'merge'
-            },
-            success: function(response) {
-              console.log('BASKET COOKIE CLEARED!');
-            }
-          });
-          $('.header_myaccount').trigger('change');
-          $.ajax({
-            type: 'post',
-            dataType: 'json',
-            url: './api/get-checkoutstep.php',
-            data: {},
-            success: function(response) {
-              $('.checkout-steps__div').first().html(response);
-            }
-          });
+  var response = userLogin(login, password, rememberme);
+  
+  if (response) {
+    $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
+    if (window.location.pathname.split('/')[1] == 'register' || window.location.pathname.split('/')[1] == 'profile') {
+      window.location.href = './profile';
+    } else {
+      setTimeout(function() {
+        $('.header_myaccount').slideToggle();
+      }, 1500);
+      $.ajax({
+        type: 'post',
+        dataType: 'json',
+        url: './api/get-basket.php',
+        data: {
+          request: 'merge'
+        },
+        success: function(response) {
+          console.log('BASKET COOKIE CLEARED!');
         }
-        
-      }
+      });
+      $('.header_myaccount').trigger('change');
+      $.ajax({
+        type: 'post',
+        dataType: 'json',
+        url: './api/get-checkoutstep.php',
+        data: {},
+        success: function(response) {
+          $('.checkout-steps__div').first().html(response);
+        }
+      });
     }
-  });
+  }
+}
+
+function userLoginCheckout() {
+  var login = $('#checkout-login').val();
+  var password = $('#checkout-password').val();
+  var response = userLogin(login, password, rememberme);
+
+  if (response) {
+    $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
+    $.ajax({
+      type: 'post',
+      dataType: 'json',
+      url: './api/get-basket.php',
+      data: {
+        request: 'replace'
+      },
+      success: function(response) {
+        console.log('BASKET COOKIE CLEARED!');
+      }
+    });
+    $('.header_myaccount').trigger('change');
+    $.ajax({
+      type: 'post',
+      dataType: 'json',
+      url: './api/get-checkoutstep.php',
+      data: {},
+      success: function(response) {
+        $('.checkout-steps__div').first().html(response);
+      }
+    });
+  }
 }
 
 function userLogout() {
@@ -308,10 +326,7 @@ function userLogout() {
   });
 }
 
-function userLoginCheckout() {
-  var login = $('#checkout-login').val();
-  var password = $('#checkout-password').val();
-  var rememberme = false;
+function userLogin(login, password, rememberme = false) {
   $.ajax({
     type: 'post',
     dataType: "json",
@@ -323,31 +338,13 @@ function userLoginCheckout() {
     },
     success: function(response) {
       console.log(response);
-      $('.header_myaccount').html(response.html);
       if (response.result) {
-        $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
-        $.ajax({
-          type: 'post',
-          dataType: 'json',
-          url: './api/get-basket.php',
-          data: {
-            request: 'replace'
-          },
-          success: function(response) {
-            console.log('BASKET COOKIE CLEARED!');
-          }
-        });
-        $('.header_myaccount').trigger('change');
-        $.ajax({
-          type: 'post',
-          dataType: 'json',
-          url: './api/get-checkoutstep.php',
-          data: {},
-          success: function(response) {
-            $('.checkout-steps__div').first().html(response);
-          }
-        });
+        $('.header_myaccount').html(response.html);
+        return true;
+      } else {
+        return false;
       }
+      
     }
   });
 }
@@ -362,4 +359,36 @@ function checkoutNextStep() {
   $('#info-dialog').attr('title', 'NEXT STEP button pressed');
   $('#info-dialog').html('User logged in - lets go to place ORDER!');
   $('#info-dialog').dialog();  
+}
+
+function registerUser() {
+  var email = $('#register-email').val();
+  var login = $('#register-login').val();
+  var password = $('#register-password').val();
+  // var password2 = $('#register-password2').val();
+  // password == password2 - checking on HTML/JS level
+  // проверка на null - тоже в JS (не хочу делать input type="submit", лучше button просто)
+  $.ajax({
+    type: 'post',
+    dataType: "json",
+    url: '/api/register.php',
+    data: {
+      email: email,
+      login: login,
+      password: password
+    },
+    success: function(response) {
+      console.log(response);
+      if (response) {
+        userLogin(login, password);
+        window.location.href = './profile';
+      } else {
+        $('#info-dialog').attr('title', 'Something wrong - try again');
+        $('#info-dialog').html('E-mail or Login exists, try AGAIN!');
+        $('#info-dialog').dialog();
+      }
+      // if true - all ok, login new user and go to profile
+      // if false - dialog - try again
+      }
+  });
 }

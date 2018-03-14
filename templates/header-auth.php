@@ -6,7 +6,7 @@
   <input type="password" name="password" id="myaccount-password"><br>
   <input type="checkbox" name="rememberme" id="myaccount-rememberme">
   <label for="rememberme">Remember me</label>
-  <input type="button" value="Sign in" onclick="userLogin()">
+  <input type="button" value="Sign in" onclick="userLoginHeader()">
 </form>
 <a href="#">Forgot password?</a>
 <div>

@@ -17,6 +17,7 @@
 }
 
 .register-main input[type="email"],
+.register-main input[type="text"],
 .register-main input[type="password"] {
   margin-top: 7px;
   margin-bottom: 15px;
@@ -52,12 +53,12 @@
   outline: none;
 }
 
-.register-main button + span {
-  position: relative;
-  font-weight: 400;
-  margin-left: 27px;
-  top: 5px;
-}
+//.register-main button + span {
+//  position: relative;
+//  font-weight: 400;
+//  margin-left: 27px;
+//  top: 5px;
+//}
 
 .register-main__div {
   display: flex;
