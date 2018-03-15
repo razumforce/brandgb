@@ -15,9 +15,9 @@
     <div class="profile-main__user">
       <p class="profile-main__p-light">Your details</p>
       <div>
-        <div>User name:</div>
-        <div>E-mail:</div>
-        <div>Password:</div>
+        <div>User name: <?php echo $content['user_details']['login']; ?></div>
+        <div>E-mail: <?php echo $content['user_details']['email']; ?></div>
+        <div>Password: <?php echo $content['user_details']['password']; ?></div>
       </div>
     </div>
     <div class="profile-main__orders">
@@ -27,12 +27,14 @@
         <span>Items: </span>
         <span>Total Amount:</span>
       </div>
+      <?php foreach ($content['orders'] as $order): ?>
       <div>
-        <span>111</span>
-        <span>2018-03-15</span>
-        <span>10</span>
-        <span>$125.05</span>
+        <span><?=$order['id_order']?></span>
+        <span><?=$order['date']?></span>
+        <span><?=$order['quantity']?></span>
+        <span><?=$order['amount']?></span>
       </div>
+    <?php endforeach; ?>
     </div>
   </div>
   <?php endif; ?> 

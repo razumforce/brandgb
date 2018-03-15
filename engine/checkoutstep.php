@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once('../../config/config.php');
+require_once('../../engine/functions.php');
 require_once('../../engine/db.php');
 require_once('../../engine/authorize.php');
 
@@ -8,7 +9,8 @@ require_once('../../engine/authorize.php');
 $isAuth = auth();
 
 if ($isAuth) {
-	// set user details, to show in checkout-first.php true part
+	$content['user_details'] = getUserDetails($isAuth); 
+  $content['basket_details'] = getBasketDetails($isAuth);
 }
 
 ob_start();

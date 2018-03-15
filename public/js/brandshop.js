@@ -228,70 +228,75 @@ function userLoginHeader() {
   var login = $('#myaccount-login').val();
   var password = $('#myaccount-password').val();
   var rememberme = $('#myaccount-rememberme').prop('checked');
-  var response = userLogin(login, password, rememberme);
-  
-  if (response) {
-    $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
-    if (window.location.pathname.split('/')[1] == 'register' || window.location.pathname.split('/')[1] == 'profile') {
-      window.location.href = './profile';
-    } else {
-      setTimeout(function() {
-        $('.header_myaccount').slideToggle();
-      }, 1500);
-      $.ajax({
-        type: 'post',
-        dataType: 'json',
-        url: './api/get-basket.php',
-        data: {
-          request: 'merge'
-        },
-        success: function(response) {
-          console.log('BASKET COOKIE CLEARED!');
-        }
-      });
-      $('.header_myaccount').trigger('change');
-      $.ajax({
-        type: 'post',
-        dataType: 'json',
-        url: './api/get-checkoutstep.php',
-        data: {},
-        success: function(response) {
-          $('.checkout-steps__div').first().html(response);
-        }
-      });
+  userLogin(login, password, rememberme).then(function(response) {
+    if (response) {
+      $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
+      if (window.location.pathname.split('/')[1] == 'register' || window.location.pathname.split('/')[1] == 'profile') {
+        window.location.href = './profile';
+      } else {
+        setTimeout(function() {
+          $('.header_myaccount').slideToggle();
+        }, 1500);
+        $.ajax({
+          type: 'post',
+          dataType: 'json',
+          url: './api/get-basket.php',
+          data: {
+            request: 'merge'
+          },
+          success: function(response) {
+            console.log('BASKET COOKIE CLEARED!');
+            $('.header_myaccount').trigger('change');
+            $.ajax({
+              type: 'post',
+              dataType: 'json',
+              url: './api/get-checkoutstep.php',
+              data: {},
+              success: function(response) {
+                $('.checkout-steps__div').first().html(response);
+              }
+            });
+          }
+        });
+      }
     }
-  }
+  }, function(error) {
+
+  });
 }
 
 function userLoginCheckout() {
   var login = $('#checkout-login').val();
   var password = $('#checkout-password').val();
-  var response = userLogin(login, password, rememberme);
+  userLogin(login, password).then(function(response) {
+    console.log('USER LOGIN STATUS = ', response);
+    if (response) {
+      $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
+      $.ajax({
+        type: 'post',
+        dataType: 'json',
+        url: './api/get-basket.php',
+        data: {
+          request: 'replace'
+        },
+        success: function(response) {
+          console.log('BASKET COOKIE CLEARED!');
+          $('.header_myaccount').trigger('change');
+          $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: './api/get-checkoutstep.php',
+            data: {},
+            success: function(response) {
+              $('.checkout-steps__div').first().html(response);
+            }
+          });
+        }
+      });
+    }
+  }, function(error) {
 
-  if (response) {
-    $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
-    $.ajax({
-      type: 'post',
-      dataType: 'json',
-      url: './api/get-basket.php',
-      data: {
-        request: 'replace'
-      },
-      success: function(response) {
-        console.log('BASKET COOKIE CLEARED!');
-      }
-    });
-    $('.header_myaccount').trigger('change');
-    $.ajax({
-      type: 'post',
-      dataType: 'json',
-      url: './api/get-checkoutstep.php',
-      data: {},
-      success: function(response) {
-        $('.checkout-steps__div').first().html(response);
-      }
-    });
-  }
+  });
 }
 
 function userLogout() {
@@ -327,25 +332,30 @@ function userLogout() {
 }
 
 function userLogin(login, password, rememberme = false) {
-  $.ajax({
-    type: 'post',
-    dataType: "json",
-    url: '/api/login.php',
-    data: {
-      login: login,
-      password: password,
-      rememberme: rememberme
-    },
-    success: function(response) {
-      console.log(response);
-      if (response.result) {
-        $('.header_myaccount').html(response.html);
-        return true;
-      } else {
-        return false;
+  return new Promise(function(resolve, reject) {
+    $.ajax({
+      type: 'post',
+      dataType: "json",
+      url: '/api/login.php',
+      data: {
+        login: login,
+        password: password,
+        rememberme: rememberme
+      },
+      error: function(err) {
+        reject(err);
+      },
+      success: function(response) {
+        console.log(response);
+        if (response.result) {
+          $('.header_myaccount').html(response.html);
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+        
       }
-      
-    }
+    });
   });
 }
 
@@ -356,9 +366,21 @@ function checkoutNotRegistered() {
 }
 
 function checkoutNextStep() {
-  $('#info-dialog').attr('title', 'NEXT STEP button pressed');
-  $('#info-dialog').html('User logged in - lets go to place ORDER!');
-  $('#info-dialog').dialog();  
+  // $('#info-dialog').attr('title', 'NEXT STEP button pressed');
+  // $('#info-dialog').html('User logged in - lets go to place ORDER!');
+  // $('#info-dialog').dialog();
+  $.ajax({
+    type: 'post',
+    dataType: 'json',
+    url: './api/get-basket.php',
+    data: {
+      request: 'createorder'
+    },
+    success: function(response) {
+      console.log('NEW ORDER CREATED, BASKET CLEARED');
+      window.location.href = './profile';
+    }
+  });
 }
 
 function registerUser() {
@@ -380,8 +402,11 @@ function registerUser() {
     success: function(response) {
       console.log(response);
       if (response) {
-        userLogin(login, password);
-        window.location.href = './profile';
+        userLogin(login, password).then(function(response) {
+          window.location.href = './profile';
+        }, function(error) {
+
+        });
       } else {
         $('#info-dialog').attr('title', 'Something wrong - try again');
         $('#info-dialog').html('E-mail or Login exists, try AGAIN!');

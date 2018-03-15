@@ -27,7 +27,6 @@ if ($isAuth) {
   $loggedUsers = getRowResult($sql, $link);
   if ($loggedUsers) {
     $user_id = $loggedUsers['user_id'];
-    $basket['message'] = $user_id;
   } else {
     $isAuth = false;
   }
@@ -55,11 +54,13 @@ switch ($operation) {
 
   case 'merge':
     mergeBaskets($user_id);
+    echo json_encode(true);
   break;
 
   case 'replace':
     clearBasket($user_id);
     mergeBaskets($user_id);
+    echo json_encode(true);
   break;
 
   case 'delete':
@@ -75,6 +76,11 @@ switch ($operation) {
   case 'clearbasket':
     clearBasket($user_id);
     echo json_encode($res);
+  break;
+
+  case 'createorder':
+    $orderCreated = createOrder($user_id);
+    echo json_encode($orderCreated);
   break;
 
   default:
@@ -167,6 +173,14 @@ function clearBasket($user_id) {
   return $res;
 }
 
+function createOrder($user_id) {
+  if (is_null($user_id)) {
+    $res = false;
+  } else {
+    $res = createOrderDB($user_id);
+  }
+  return $res;
+}
 
 
 // helper functions
@@ -178,6 +192,7 @@ function getBasketContentDB($user_id)
 basket.user_id,
 basket.item_id,
 basket.quantity,
+basket.is_in_order,
 items.name as items_name,
 items.price,
 items.rating,
@@ -192,7 +207,7 @@ from basket inner join items on basket.item_id = items.id_item
 inner join colors on basket.color_id = colors.id_color
 inner join sizes on basket.size_id = sizes.id_size
 inner join shipping on basket.shipping_id = shipping.id_shipping
-left join (select * from photos where type = 0) as ph on ph.item_id = basket.item_id where basket.user_id = '$user_id';";
+left join (select * from photos where type = 0) as ph on ph.item_id = basket.item_id where basket.user_id = '$user_id' and basket.is_in_order = '0';";
   return getAssocResult($sql);
 }
 
@@ -265,21 +280,21 @@ function deleteFromBasketDB($item, $user_id) {
   $itemColorId = $item['color'];
   $itemSizeId = $item['size'];
   $itemShippingId = $item['shipping'];
-  $sqlCheckQuantity = "select quantity from basket where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId';";
+  $sqlCheckQuantity = "select quantity from basket where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId' and basket.is_in_order = '0';";
 
   $currentQuantity = getAssocResult($sqlCheckQuantity)[0]['quantity'];
 
   if (is_null($currentQuantity) || $currentQuantity == 1) {
-    $sql = "delete from basket where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId';";
+    $sql = "delete from basket where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId' and basket.is_in_order = '0';";
   } else {
-    $sql = "update basket set quantity = quantity - 1 where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId';";
+    $sql = "update basket set quantity = quantity - 1 where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId' and basket.is_in_order = '0';";
   }
   
   return executeQuery($sql);
 }
 
 function clearBasketDB($user_id) {
-  $sql = "delete from basket where user_id = '$user_id';";
+  $sql = "delete from basket where user_id = '$user_id' and basket.is_in_order = '0';";
   return executeQuery($sql);
 }
 
@@ -289,12 +304,12 @@ function insertIntoBasketDB($item, $user_id) {
   $itemSizeId = $item['size'];
   $itemShippingId = $item['shipping'];
   $itemQuantity = $item['quantity'];
-  $sql = "insert into basket values ('$itemId', '$itemColorId', '$itemSizeId', '$itemQuantity', '$itemShippingId', '$user_id');";
+  $sql = "insert into basket values ('$itemId', '$itemColorId', '$itemSizeId', '$itemQuantity', '$itemShippingId', '$user_id', '0');";
   if(!executeQuery($sql)) {
-    $sql = "update basket set quantity = quantity + '$itemQuantity' where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId';";
+    $sql = "update basket set quantity = quantity + '$itemQuantity' where user_id = '$user_id' and item_id = '$itemId' and color_id = '$itemColorId' and size_id = '$itemSizeId' and shipping_id = '$itemShippingId' and basket.is_in_order = '0';";
     executeQuery($sql);
   }
-  return true;
+  return $sql;
 }
 
 function insertIntoBasketCK($currentBasket, $item) {
@@ -315,6 +330,16 @@ function insertIntoBasketCK($currentBasket, $item) {
   return $currentBasket;
 }
 
-
+function createOrderDB($user_id) {
+  $sql = "insert into orders (quantity, amount, user_id)
+select sum(quantity), sum((quantity * price)) as amount, user_id from basket
+inner join items on id_item = item_id where user_id = '$user_id' and basket.is_in_order = '0';";
+  if($newOrder = insertAndGetId($sql)) {
+    $sql = "update basket set is_in_order = '$newOrder' where user_id = '$user_id' and basket.is_in_order = '0'";
+    return executeQuery($sql);
+  } else {
+    return false;
+  }
+}
 
 ?>

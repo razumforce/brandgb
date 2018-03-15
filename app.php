@@ -26,7 +26,7 @@ if ($url_array[1] == "") {
   
 }
 
-$content = prepareVariables($page_name);
+$content = prepareVariables($page_name, $isAuth);
 
 // echo "<pre>";
 // print_r($page_name);

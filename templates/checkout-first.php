@@ -32,14 +32,14 @@
   <h3>YOU ARE LOGGED IN</h3>
   <p class="checkout-steps__p-light">Your details below</p>
   <div>
-    <div>User name:</div>
-    <div>Address:</div>
+    <div>User name: <?php echo $content['user_details']['login']; ?></div>
+    <div>E-mail: <?php echo $content['user_details']['email']; ?></div>
   </div>
   <p><br></p>
   <h3>YOUR ORDER DETAILS</h3>
   <div>
-    <div>Items in order:</div>
-    <div>Total amount:</div>
+    <div>Items in order: <?php echo $content['basket_details']['quantity_total']; ?></div>
+    <div>Total amount: <?php echo $content['basket_details']['amount_total']; ?></div>
   </div>
   <button type="button" value="" onclick="checkoutNextStep()">CONFIRM ORDER</button>
 </form>
