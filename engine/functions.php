@@ -7,7 +7,7 @@ define('ERROR_TEMPLATE_EMPTY', 2);
 
 //Функция получает переменные в зависимости от выбранной страницы. news или newspage или feedback
 
-function prepareVariables($page_name) 
+function prepareVariables($page_name, $isAuth) 
 {
 	switch ($page_name){
 	
@@ -28,10 +28,22 @@ function prepareVariables($page_name)
 
 		case "checkout":
 			$vars['content'] = '../templates/checkout.php';
+			$vars['user_details'] = getUserDetails($isAuth); 
+			$vars['basket_details'] = getBasketDetails($isAuth);
 		break;
 		
 		case "shoppingcart":
 			$vars['content'] = '../templates/shoppingcart.php';
+		break;
+
+		case "profile":
+			$vars['content'] = '../templates/profile.php';
+			$vars['user_details'] = getUserDetails($isAuth);
+			$vars['orders'] = getOrders($isAuth);
+		break;
+
+		case "register":
+			$vars['content'] = '../templates/register.php';
 		break;
 
 	}
@@ -105,4 +117,66 @@ from items_sizes inner join sizes on items_sizes.size_id = sizes.id_size where i
 	$result['pic'] = $pics;
 
 	return $result;
+}
+
+function getUserDetails($isAuth) {
+	$userDetails = ['login' => '', 'email' => '', 'password' => ''];
+
+	if ($isAuth) {
+	  $link = getConnection();
+	  $IdUserSession = $_SESSION['IdUserSession'];
+	  $hash_cookie = mysqli_real_escape_string($link, $IdUserSession);
+	  $sql = "select user_id from users_auth where hash_cookie = '$hash_cookie'";
+	  $loggedUsers = getRowResult($sql, $link);
+	  if ($loggedUsers) {
+	    $user_id = $loggedUsers['user_id'];
+	    $sql = "select login, email, password from users where id_user = '$user_id';";
+	    $userDetails = getRowResult($sql, $link);
+	  }
+	}
+
+	return $userDetails;
+}
+
+function getBasketDetails($isAuth) {
+	$basketDetails = ['quantity_total' => '0', 'amount_total' => '0'];
+
+	if ($isAuth) {
+	  $link = getConnection();
+	  $IdUserSession = $_SESSION['IdUserSession'];
+	  $hash_cookie = mysqli_real_escape_string($link, $IdUserSession);
+	  $sql = "select user_id from users_auth where hash_cookie = '$hash_cookie'";
+	  $loggedUsers = getRowResult($sql, $link);
+	  if ($loggedUsers) {
+	    $user_id = $loggedUsers['user_id'];
+	    $sql = "select sum(quantity) as quantity_total, sum(quantity * items.price) as amount_total from basket
+inner join items on basket.item_id = items.id_item
+where user_id = '$user_id' and is_in_order = '0';";
+	    $basketDetails = getRowResult($sql, $link);
+	    if (is_null($basketDetails['quantity_total'])) {
+	    	$basketDetails = ['quantity_total' => '0', 'amount_total' => '0'];
+	    }
+	  }
+	}
+
+	return $basketDetails;
+}
+
+function getOrders($isAuth) {
+	$orders = [];
+
+	if ($isAuth) {
+	  $link = getConnection();
+	  $IdUserSession = $_SESSION['IdUserSession'];
+	  $hash_cookie = mysqli_real_escape_string($link, $IdUserSession);
+	  $sql = "select user_id from users_auth where hash_cookie = '$hash_cookie'";
+	  $loggedUsers = getRowResult($sql, $link);
+	  if ($loggedUsers) {
+	    $user_id = $loggedUsers['user_id'];
+	    $sql = "select * from orders where user_id = '$user_id' order by date desc;";
+	    $orders = getAssocResult($sql);
+	  }
+	}
+
+	return $orders;
 }

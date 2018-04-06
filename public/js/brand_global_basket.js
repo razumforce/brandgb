@@ -82,8 +82,6 @@ Basket.prototype.refresh = function () {
 
 
 Basket.prototype.add = function (id, color, size, qty, shipping) {
-  console.log('add started!', id, color, size, qty, shipping);
-
   $.ajax({
     type: 'post',
     url: './api/get-basket.php',
@@ -102,17 +100,9 @@ Basket.prototype.add = function (id, color, size, qty, shipping) {
     },
     context: this
   });
-  //
-  // SEND to server by $.post - {"id": id}
-  // if result === true - then make below code (collectBasketItems and refresh)
-  // if result === false - then err handler
-  // ВСЕ ОПЕРАЦИИ ПО ДОБАВЛЕНИЮ ТОВАРА В КОРЗИНУ - НА СТОРОНЕ СЕРВЕРА!!!
-  //
 };
 
 Basket.prototype.delete = function (id, cid, sid, shid) {
-  console.log('delete started!', id, cid, sid, shid);
-
   $.ajax({
     type: 'post',
     url: './api/get-basket.php',
@@ -132,12 +122,24 @@ Basket.prototype.delete = function (id, cid, sid, shid) {
     },
     context: this
   });
-  //
-  // SEND to server by $.post - {"id": id}
-  // if result === true - then make below code (collectBasketItems and refresh)
-  // if result === false - then err handler
-  // ВСЕ ОПЕРАЦИИ ПО УДАЛЕНИЮ ТОВАРА ИЗ КОРЗИНЫ - НА СТОРОНЕ СЕРВЕРА!!!
-  //
+};
+
+Basket.prototype.clear = function () {
+  $.ajax({
+    type: 'post',
+    url: './api/get-basket.php',
+    dataType: 'json',
+    data: {
+      request: 'clearbasket'
+    },
+    success: function(data) {
+      console.log(data);
+      this.collectBasketItems();
+      this.refresh();
+      console.log(this.basketItems);
+    },
+    context: this
+  });
 };
 
 

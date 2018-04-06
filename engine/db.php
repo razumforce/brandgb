@@ -28,6 +28,18 @@ function executeQuery($sql, $db = null){
 	return $result;
 }
 
+function insertAndGetId($sql, $db = null){
+    if($db == null){
+        $db = mysqli_connect(HOST, USER, PASS, DB) or die(include('../test.php'));
+        mysqli_query($db, "SET NAMES utf8");
+    }
+
+    $result = mysqli_query($db, $sql);
+    $insertId = mysqli_insert_id($db);
+    mysqli_close($db);
+    return $insertId;
+}
+
 function getRowResult($sql, $db = null){
     $array_result = getAssocResult($sql, $db);
 
@@ -38,3 +50,4 @@ function getRowResult($sql, $db = null){
 
     return $result;
 }
+
