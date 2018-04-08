@@ -33,14 +33,17 @@
   align-items: center;
 }
 
-.profile-main__orders > div {
-  min-height: 25px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 70%;
-  @include border-solid-1-bottom($border-slider);
+.profile-main_table tbody > tr:hover {
+  background-color: #ddd;
+}
+
+.profile-main_table th,
+.profile-main_table td {
+  border-bottom: 1px solid #ddd;
+  padding-right: 25px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  text-align: right;
 }
 
 .profile-main__p-light {

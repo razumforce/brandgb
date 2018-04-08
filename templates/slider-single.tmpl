@@ -1,0 +1,31 @@
+<section class="single-slider">
+  <div id="single-slider-div" class="carousel slide" data-ride="carousel" data-interval="5000">
+
+    <ol class="carousel-indicators slider-ind single-slider-ind">
+      {% for key, pic in content_data.single_item.pic %}
+        <li data-target="#single-slider-div" data-slide-to="{{ key }}" class="{{ pic.type }}"></li>
+      {% endfor %}
+
+
+    </ol>
+
+    <div class="carousel-inner">
+
+    {% for key, pic in content_data.single_item.pic %}
+      <div class="item {{ pic.type }}">
+        <img src="{{ pic.url }}" alt="single-{{ key }}">
+      </div>
+    {% endfor %}
+
+
+      
+    </div>
+  </div>       
+  <div class="single-slider__left">
+    <a href="#single-slider-div" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
+  </div>
+  <div class="single-slider__right">
+    <a href="#single-slider-div" data-slide="next"><i class="fa fa-chevron-right"></i></a>
+  </div>
+  
+</section>

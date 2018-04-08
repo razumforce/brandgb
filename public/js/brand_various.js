@@ -40,10 +40,18 @@ function ProductByPage($root, $productItems) {
 ProductByPage.prototype.loadAndShow = function() {
   var itemsPerPage = $('#product-sort-number>div>span:first-child').text();
   var sortBy = $('#product-sort-name>div>span:first-child').text();
-  $.get({
-      url: './api/get-products.php?page=' + this.currentPage + '&items=' + itemsPerPage + '&sort=' + sortBy,
+  $.ajax({
+      type: 'post',
+      url: '/index.php',
       dataType: 'json',
+      data: {
+        metod: 'catalog',
+        page: this.currentPage,
+        items: itemsPerPage,
+        sort: sortBy
+      },
       success: function (data) {
+        console.log(data);
           if (data.result) {
             this.totalPages = parseInt(data.total / itemsPerPage) + 1;
             this.renderPagination();

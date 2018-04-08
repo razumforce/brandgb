@@ -1,0 +1,22 @@
+<section class="maylike-catalog">
+  <div class="maylike-info">
+    <div class="maylike-info__title">
+      <h2>YOU MAY LIKE ALSO</h2>
+    </div>
+  </div>
+  <div class="maylike-items">
+
+    {% for item in content_data.maylike_product %}
+      <div class="product-items__item product-items__4col" data-id="{{ item.id_item }}">
+        <img src="{{ item.url }}" alt="{{ item.name }}">
+        <p class="product-items__item_desc">{{ item.name }}</p>
+        <p class="product-items__item_price">${{ item.price }}</p>
+        <div class="product-items__item_add">
+          <span>Add to cart</span>
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+  <div class="clearfix"></div>
+</section>
