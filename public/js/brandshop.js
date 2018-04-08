@@ -73,6 +73,13 @@ $(document).ready(function() {
 
 
 
+
+// код для страницы profile.html
+  if ($('#profile-main-orders-list').length !== 0) {
+    $('#profile-main-orders-list').on('click', '.fa-times-circle', deleteOrderAdmin);
+  }
+  
+
 // код для КОРЗИН на всех страницах
 
   if ($('#shopcart-content').length !== 0) {
@@ -381,7 +388,7 @@ function checkoutNotRegistered() {
   $('#info-dialog').dialog();
 }
 
-function checkoutNextStep() {
+function checkoutNextStep() { // CREATE NEW ORDER
   // $('#info-dialog').attr('title', 'NEXT STEP button pressed');
   // $('#info-dialog').html('User logged in - lets go to place ORDER!');
   // $('#info-dialog').dialog();
@@ -396,6 +403,29 @@ function checkoutNextStep() {
     success: function(response) {
       console.log('NEW ORDER CREATED, BASKET CLEARED');
       window.location.href = '/profile';
+    }
+  });
+}
+
+function deleteOrderAdmin(event) {
+  var id = $(event.currentTarget).parent().attr('data-orderid');
+  $.ajax({
+    type: 'post',
+    dataType: 'json',
+    url: '/index.php',
+    data: {
+      metod: 'basket',
+      req: 'deleteorder',
+      orderId: id
+    },
+    success: function(response) {
+      console.log(response)
+      if (response.result) {
+        console.log('ORDER STATUS CHANGED TO DELETED');
+        $('#profile-main-orders-list').html(response.html);
+      } else {
+        console.log('SOMETHING WENT WRONG WITH ORDER DELETION');
+      }
     }
   });
 }

@@ -1,0 +1,23 @@
+{% if isAuth and isAuth.0.status_id != 9 %}
+  {% for order in content_data.orders %}
+  <tr>
+    <td>{{ order.id_order }}</td>
+    <td>{{ order.date|date("d/m/Y h:i") }}</td>
+    <td>{{ order.quantity }}</td>
+    <td>{{ order.amount|number_format(2, '.', ',') }}</td>
+  </tr>
+  {% endfor %}
+{% endif %} 
+
+{% if isAuth and isAuth.0.status_id == 9 %}
+  {% for order in content_data.orders %}
+  <tr>
+    <td>{{ order.login }}</td>
+    <td>{{ order.id_order }}</td>
+    <td>{{ order.date|date("d/m/Y h:i") }}</td>
+    <td>{{ order.quantity }}</td>
+    <td>{{ order.amount|number_format(2, '.', ',') }}</td>
+    <td data-orderid="{{ order.id_order }}" class="profile-order-delete"><i class="fa fa-times-circle" aria-hidden="true"></i></td>
+  </tr>
+  {% endfor %}
+{% endif %} 

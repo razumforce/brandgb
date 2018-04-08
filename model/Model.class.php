@@ -90,11 +90,17 @@ class Model
         ];
       $loggedUsers = db::getInstance()->SelectRow($sql['sql'], $sql['param']);
       if ($loggedUsers) {
-        $sql['sql'] = "select * from orders where user_id = :user_id order by date desc;";
-        $sql['param'] = 
-          [
-            'user_id' => $loggedUsers['user_id']
-          ];
+        if ($isAuth[0]['status_id'] == 9) {
+          $sql['sql'] = "select orders.id_order, orders.date, orders.quantity, orders.amount, users.login from orders inner join users on orders.user_id = users.id_user where orders.status_id <> '100' order by date desc;";
+          $sql['param'] = [];
+        } else {
+          $sql['sql'] = "select * from orders where user_id = :user_id and orders.status_id <> '100' order by date desc;";
+          $sql['param'] = 
+            [
+              'user_id' => $loggedUsers['user_id']
+            ];
+        }
+        
         $orders = db::getInstance()->Select($sql['sql'], $sql['param']);
       }
     }

@@ -1968,6 +1968,23 @@ span.product-choice__control-active {
   padding-top: 5px;
   text-align: right; }
 
+.profile-main_table th:nth-child(6) {
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  text-align: center;
+  color: #ff0d0d; }
+
+.profile-main_table td:nth-child(6) {
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  text-align: center;
+  cursor: pointer;
+  color: #ff0d0d; }
+
 .profile-main__p-light {
   font-size: 16px;
   color: #b3b2b2;

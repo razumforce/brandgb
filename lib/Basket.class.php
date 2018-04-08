@@ -95,6 +95,22 @@ class Basket
         
     }
 
+    public static function deleteorder($isAuth)
+    {
+        if (is_null($isAuth['id_user']) or $isAuth['status_id'] != 9 ) {
+          $res = false;
+        } else {
+          $res = self::deleteOrderDB($_POST['orderId']);
+        }
+        if ($res) {
+          return true;
+        } else {
+          return false;
+        }
+        
+        
+    }
+
 
     // PROTECTED методы
 
@@ -357,6 +373,11 @@ class Basket
       }
     }
 
+
+    private static function deleteOrderDB($orderId) {
+      $sql = "update orders set status_id = '100' where id_order = ?";
+      return db::getInstance()->Query($sql, [$orderId]);
+    }
 		
 }
 ?>

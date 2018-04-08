@@ -7,7 +7,7 @@
   </div>
   {% endif %}
 
-  {% if isAuth %}
+  {% if isAuth and isAuth.0.status_id != 9 %}
   <div class="profile-main__div">
     <div class="profile-main__title">
       <span>Your personal profile</span>
@@ -30,15 +30,41 @@
             <th>Total Amount, $</th>
           </tr>
         </thead>
-        <tbody>
-          {% for order in content_data.orders %}
+        <tbody id="profile-main-orders-list">
+          {% include 'profile-main-orders.tmpl' %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %} 
+
+  {% if isAuth and isAuth.0.status_id == 9 %}
+  <div class="profile-main__div">
+    <div class="profile-main__title">
+      <span>ADMIN panel and profile</span>
+    </div>
+    <div class="profile-main__user">
+      <p class="profile-main__p-light">Your details</p>
+      <div>
+        <div>ADMIN name: {{ content_data.user_details.login }}</div>
+        <div>E-mail: {{ content_data.user_details.email }}</div>
+        <div>Password: {{ content_data.user_details.password }}</div>
+      </div>
+    </div>
+    <div class="profile-main__orders">
+      <table class="profile-main_table">
+        <thead>
           <tr>
-            <td>{{ order.id_order }}</td>
-            <td>{{ order.date|date("d/m/Y h:i") }}</td>
-            <td>{{ order.quantity }}</td>
-            <td>{{ order.amount|number_format(2, '.', ',') }}</td>
+            <th>User name</th>
+            <th>Order #</th>
+            <th>Order date/time</th>
+            <th>Items</th>
+            <th>Total Amount, $</th>
+            <th>DELETE</th>
           </tr>
-          {% endfor %}
+        </thead>
+        <tbody id="profile-main-orders-list">
+          {% include 'profile-main-orders.tmpl' %}
         </tbody>
       </table>
     </div>
