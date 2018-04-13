@@ -1,5 +1,5 @@
 <?php
-$config['db_user'] = 'root';
+$config['db_user'] = 'newuser';
 $config['db_password'] = '123';
 $config['db_base'] = 'brand';
 $config['db_host'] = 'localhost';

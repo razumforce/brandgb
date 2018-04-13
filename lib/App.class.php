@@ -15,6 +15,7 @@ class App
 		*/
         db::getInstance()->Connect(Config::get('db_user'), Config::get('db_password'), Config::get('db_base'));
 
+
 		//CLI - интерфейс командной строки
 		//php_sapi_name() == 'cli' - означает что скрипт запущен с командной строке
         if (php_sapi_name() !== 'cli' && isset($_SERVER) && isset($_GET)) { //Проверим, установленны ли переменные $_SERVER и $_GET
