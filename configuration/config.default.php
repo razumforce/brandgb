@@ -1,9 +1,10 @@
 <?php
-$config['db_user'] = 'newuser';
+$config['db_user'] = 'root';
 $config['db_password'] = '123';
 $config['db_base'] = 'brand';
-$config['db_host'] = 'localhost';
+$config['db_host'] = 'brand.gb';
 $config['db_charset'] = 'UTF-8';
+$config['db_port'] = '8889';
 
 $config['path_root'] = __DIR__;
 $config['path_public'] = $config['path_root'] . '/../public';

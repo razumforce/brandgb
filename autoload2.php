@@ -1,6 +1,6 @@
 <?php
 //подключаем автозагрузчик twig и запускаем статический метод aregister
-require_once '../vendor/autoload.php'; 
+require_once './vendor/autoload.php'; 
 
 spl_autoload_register("gbStandardAutoload"); //Регистрируем собственный автозагрузчик
 
