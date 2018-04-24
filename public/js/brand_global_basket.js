@@ -21,12 +21,14 @@ function Basket($rootMain, $rootHeader) {
 
 
 Basket.prototype.collectBasketItems = function () {
+  console.log('try to read basket');
   $.ajax({
       type: 'post',
-      url: './api/get-basket.php',
+      url: '/index.php',
       dataType: 'json',
       data: {
-        request: 'read'
+        metod: 'basket',
+        req: 'read'
       },
       success: function (data) {
           console.log(data);
@@ -84,10 +86,11 @@ Basket.prototype.refresh = function () {
 Basket.prototype.add = function (id, color, size, qty, shipping) {
   $.ajax({
     type: 'post',
-    url: './api/get-basket.php',
+    url: '/index.php',
     dataType: 'json',
     data: {
-      request: 'add',
+      metod: 'basket',
+      req: 'add',
       id: id,
       color: color,
       size: size,
@@ -105,10 +108,11 @@ Basket.prototype.add = function (id, color, size, qty, shipping) {
 Basket.prototype.delete = function (id, cid, sid, shid) {
   $.ajax({
     type: 'post',
-    url: './api/get-basket.php',
+    url: '/index.php',
     dataType: 'json',
     data: {
-      request: 'delete',
+      metod: 'basket',
+      req: 'delete',
       id: id,
       cid: cid,
       sid: sid,
@@ -127,10 +131,11 @@ Basket.prototype.delete = function (id, cid, sid, shid) {
 Basket.prototype.clear = function () {
   $.ajax({
     type: 'post',
-    url: './api/get-basket.php',
+    url: '/index.php',
     dataType: 'json',
     data: {
-      request: 'clearbasket'
+      metod: 'basket',
+      req: 'clear'
     },
     success: function(data) {
       console.log(data);

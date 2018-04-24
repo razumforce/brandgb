@@ -73,6 +73,13 @@ $(document).ready(function() {
 
 
 
+
+// код для страницы profile.html
+  if ($('#profile-main-orders-list').length !== 0) {
+    $('#profile-main-orders-list').on('click', '.fa-times-circle', deleteOrderAdmin);
+  }
+  
+
 // код для КОРЗИН на всех страницах
 
   if ($('#shopcart-content').length !== 0) {
@@ -100,7 +107,7 @@ function gotoSingleItem(event) {
   if (typeof id === 'undefined' || id === '') {
     console.log('no data-id!!!');
   } else {
-    window.location.href = './single?id=' + id;
+    window.location.href = '/product/show/' + id;
   }
 }
 
@@ -228,6 +235,7 @@ function userLoginHeader() {
   var login = $('#myaccount-login').val();
   var password = $('#myaccount-password').val();
   var rememberme = $('#myaccount-rememberme').prop('checked');
+  console.log('LOGIN HEADER PRESSED');
   userLogin(login, password, rememberme).then(function(response) {
     if (response) {
       $('.header__acc-button>a').html('My Account <i class="fa fa-caret-down"></i>');
@@ -240,9 +248,10 @@ function userLoginHeader() {
         $.ajax({
           type: 'post',
           dataType: 'json',
-          url: './api/get-basket.php',
+          url: '/index.php',
           data: {
-            request: 'merge'
+            metod: 'basket',
+            req: 'merge'
           },
           success: function(response) {
             console.log('BASKET COOKIE CLEARED!');
@@ -250,10 +259,13 @@ function userLoginHeader() {
             $.ajax({
               type: 'post',
               dataType: 'json',
-              url: './api/get-checkoutstep.php',
-              data: {},
+              url: '/index.php',
+              data: {
+                metod: 'ajax',
+                PageAjax: 'getCheckoutStep'
+              },
               success: function(response) {
-                $('.checkout-steps__div').first().html(response);
+                $('.checkout-steps__div').first().html(response.html);
               }
             });
           }
@@ -275,9 +287,10 @@ function userLoginCheckout() {
       $.ajax({
         type: 'post',
         dataType: 'json',
-        url: './api/get-basket.php',
+        url: '/index.php',
         data: {
-          request: 'replace'
+          metod: 'basket',
+          req: 'replace'
         },
         success: function(response) {
           console.log('BASKET COOKIE CLEARED!');
@@ -303,7 +316,12 @@ function userLogout() {
   $.ajax({
     type: 'post',
     dataType: "json",
-    url: '/api/logout.php',
+    url: '/index.php',
+    data: {
+        metod: 'ajax',
+        PageAjax: 'logout',
+        ExitLogin: true
+      },
     success: function(response) {
       console.log(response);
       $('.header__acc-button>a').html('Sign in <i class="fa fa-caret-down"></i>');
@@ -313,17 +331,20 @@ function userLogout() {
         $('.header_myaccount').html('Logout Successful!');
         setTimeout(function() {
           $('.header_myaccount').slideToggle(function() {
-            $('.header_myaccount').html(response);
+            $('.header_myaccount').html(response.html);
           });
         }, 1500);
         $('.header_myaccount').trigger('change');
         $.ajax({
           type: 'post',
           dataType: 'json',
-          url: './api/get-checkoutstep.php',
-          data: {},
+          url: '/index.php',
+          data: {
+              metod: 'ajax',
+              PageAjax: 'getCheckoutStep'
+            },
           success: function(response) {
-            $('.checkout-steps__div').first().html(response);
+            $('.checkout-steps__div').first().html(response.html);
           }
         });
       }
@@ -336,8 +357,10 @@ function userLogin(login, password, rememberme = false) {
     $.ajax({
       type: 'post',
       dataType: "json",
-      url: '/api/login.php',
+      url: '/index.php',
       data: {
+        metod: 'ajax',
+        PageAjax: 'authenticate',
         login: login,
         password: password,
         rememberme: rememberme
@@ -365,20 +388,44 @@ function checkoutNotRegistered() {
   $('#info-dialog').dialog();
 }
 
-function checkoutNextStep() {
+function checkoutNextStep() { // CREATE NEW ORDER
   // $('#info-dialog').attr('title', 'NEXT STEP button pressed');
   // $('#info-dialog').html('User logged in - lets go to place ORDER!');
   // $('#info-dialog').dialog();
   $.ajax({
     type: 'post',
     dataType: 'json',
-    url: './api/get-basket.php',
+    url: '/index.php',
     data: {
-      request: 'createorder'
+      metod: 'basket',
+      req: 'createorder'
     },
     success: function(response) {
       console.log('NEW ORDER CREATED, BASKET CLEARED');
-      window.location.href = './profile';
+      window.location.href = '/profile';
+    }
+  });
+}
+
+function deleteOrderAdmin(event) {
+  var id = $(event.currentTarget).parent().attr('data-orderid');
+  $.ajax({
+    type: 'post',
+    dataType: 'json',
+    url: '/index.php',
+    data: {
+      metod: 'basket',
+      req: 'deleteorder',
+      orderId: id
+    },
+    success: function(response) {
+      console.log(response)
+      if (response.result) {
+        console.log('ORDER STATUS CHANGED TO DELETED');
+        $('#profile-main-orders-list').html(response.html);
+      } else {
+        console.log('SOMETHING WENT WRONG WITH ORDER DELETION');
+      }
     }
   });
 }
@@ -393,8 +440,9 @@ function registerUser() {
   $.ajax({
     type: 'post',
     dataType: "json",
-    url: '/api/register.php',
+    url: '/index.php',
     data: {
+      metod: 'register',
       email: email,
       login: login,
       password: password

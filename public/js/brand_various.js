@@ -4,9 +4,8 @@
 
 function addItemToBasket(event) {
   // event.stopPropagation();
-  console.log($(event.currentTarget));
 
-  console.log($(event.currentTarget).parent().attr('data-id') == '');
+  // console.log($(event.currentTarget).parent().attr('data-id') == '');
   var id = $(event.currentTarget).parent().attr('data-id')
 
   if (typeof id === 'undefined' || id === '') {
@@ -16,6 +15,7 @@ function addItemToBasket(event) {
     var size = $('#single-item-size>div>span:first-child>span').attr('data-sid');
     var qty = $('#single-item-qty>div>input').val();
     var shipping = '1'; // for future - 'data-shid', from dropbox
+    console.log(id, color, size, qty, shipping);
     event.data.add(id, color, size, qty, shipping);
   }
 }
@@ -40,10 +40,18 @@ function ProductByPage($root, $productItems) {
 ProductByPage.prototype.loadAndShow = function() {
   var itemsPerPage = $('#product-sort-number>div>span:first-child').text();
   var sortBy = $('#product-sort-name>div>span:first-child').text();
-  $.get({
-      url: './api/get-products.php?page=' + this.currentPage + '&items=' + itemsPerPage + '&sort=' + sortBy,
+  $.ajax({
+      type: 'post',
+      url: '/index.php',
       dataType: 'json',
+      data: {
+        metod: 'catalog',
+        page: this.currentPage,
+        items: itemsPerPage,
+        sort: sortBy
+      },
       success: function (data) {
+        console.log(data);
           if (data.result) {
             this.totalPages = parseInt(data.total / itemsPerPage) + 1;
             this.renderPagination();

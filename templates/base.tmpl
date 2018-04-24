@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include 'head.tmpl' %}
+    </head>
+<body>
+    <div id="info-dialog" title="" style="display: none;"></div>
+    <div class="wrapper">
+
+
+        {% include 'header.tmpl' %}
+
+        {% include 'menu-top.tmpl' %}
+
+        <main class="content-w">
+            
+            {% block content %}
+            {% endblock %}
+            
+            {% include 'bottom-ad.tmpl' %}
+            
+        </main>
+
+        <footer class="footer-menu">
+            <div class="container-w">
+                {% include 'footer-left-info.tmpl' %}
+
+                {% include 'menu-footer.tmpl' %}
+            </div>
+        </footer>
+
+        {% include 'footer.tmpl' %}
+
+
+    </div>    
+</body>
+    
+
+
+</html>
+
+

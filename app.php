@@ -1,40 +1,102 @@
 <?php
+header("Cache-Control: no-store, no-cache, must-revalidate");
 session_start();
 
-require_once('../config/config.php');
-require_once('../engine/functions.php');
-require_once('../engine/db.php');
-require_once('../engine/authorize.php');
+require_once('autoload.php');
 
-// echo "<pre>";
-// print_r($_SESSION);
-// echo "<br>" . "COOKIES";
-// print_r($_COOKIE['basket']);
-// echo "</pre>";
+try{
+  if ($_POST['metod'] == 'ajax')
+  {
+    ob_start(); //Запускаем буферизауию вывода  
+    
+    db::getInstance()->Connect(Config::get('db_user'), Config::get('db_password'), Config::get('db_base'));
+    
+    
+    $PageAjax = $_POST['PageAjax']; //Получаем действие на AJAX
+    $data = Ajax::$PageAjax();    
+    $view = Ajax::$views;
+    
+    $loader = new Twig_Loader_Filesystem(Config::get('path_templates'));
+    $twig = new Twig_Environment($loader);
+    $template = $twig->loadTemplate($view);
+    
+    echo $template->render($data);
+    $str = ob_get_contents(); //Записываем в переменную то, что в буфере
+    
+    ob_end_clean(); //Очищаем буфер
 
-$isAuth = auth();
+    echo json_encode(['result' => $data['isAuth'], 'html' => $str]);
+  }
+  elseif ($_POST['metod'] == 'basket') // работаем с запросами по корзине - буферизация не нужна
+  {
+      db::getInstance()->Connect(Config::get('db_user'), Config::get('db_password'), Config::get('db_base'));
 
+      $isAuth = Auth::logIn();
+      if (!$isAuth) {
+        $userId = null;
+      } else {
+        $userId = $isAuth[0]['id_user'];
+      }
 
-$url_array = explode("/", $_SERVER['REDIRECT_URL']);
-if ($url_array[1] == "") {
+      $basketOperation = $_POST['req'];
+      if ($basketOperation == 'deleteorder') { // пока что здесь разместил метод работы с deleteorder
+        $result = Basket::$basketOperation($isAuth[0]);
+        if ($result) {
+          ob_start(); //Запускаем буферизауию вывода
 
-	$page_name = "index";
+          $loader = new Twig_Loader_Filesystem(Config::get('path_templates'));
+          $twig = new Twig_Environment($loader);
+          $template = $twig->loadTemplate('profile-main-orders.tmpl');
+          $content['orders'] = Model::getOrders($isAuth);
+          $data['isAuth'] = $isAuth;
+          $data['content_data'] = $content;
 
-} else {
+          echo $template->render($data);
+          $str = ob_get_contents(); //Записываем в переменную то, что в буфере
+          
+          ob_end_clean(); //Очищаем буфер
 
-	$page_name = $url_array[1];
-  
+          echo json_encode(['result' => true, 'html' => $str]);
+        } else {
+          echo json_encode(['result' => false, 'html' => null]);
+        }
+      } else {
+        $result = Basket::$basketOperation($userId);
+        echo json_encode($result);
+      }
+      
+
+      
+  }
+  elseif ($_POST['metod'] == 'catalog') // работаем с выдачей каталога
+  {
+      db::getInstance()->Connect(Config::get('db_user'), Config::get('db_password'), Config::get('db_base'));
+
+      $result = Product::catalog();
+
+      echo json_encode($result);
+  }
+  elseif ($_POST['metod'] == 'register') // работаем с регистрацией нового
+  {
+      db::getInstance()->Connect(Config::get('db_user'), Config::get('db_password'), Config::get('db_base'));
+
+      $result = Auth::registerUser();
+
+      echo json_encode($result);
+  }
+  else
+  {
+      App::init();  //Запускаем статический метод init класса App. В соответствии с внутренними правилами имен находится в файле app.class.php
+  }
+
+}
+catch (PDOException $e){
+    echo "DB is not available";
+    var_dump($e->getTrace());
+}
+catch (Exception $e){
+    echo $e->getMessage();
 }
 
-$content = prepareVariables($page_name, $isAuth);
-
-// echo "<pre>";
-// print_r($page_name);
-// print_r($_GET);
-// print_r($url_array);
-// print_r($content); 
-// echo "</pre>";
-
-require '../templates/base.php';
 
 ?>

@@ -1,0 +1,77 @@
+<section class="profile-main">
+  {% if isAuth == false %}
+  <div class="profile-main__div">
+    <div class="profile-main__title">
+      <span>Please Sign in or Register in order to view your profile</span>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if isAuth and isAuth.0.status_id != 9 %}
+  <div class="profile-main__div">
+    <div class="profile-main__title">
+      <span>Your personal profile</span>
+    </div>
+    <div class="profile-main__user">
+      <p class="profile-main__p-light">Your details</p>
+      <div>
+        <div>User name: {{ content_data.user_details.login }}</div>
+        <div>E-mail: {{ content_data.user_details.email }}</div>
+        <div>Password: {{ content_data.user_details.password }}</div>
+      </div>
+    </div>
+    <div class="profile-main__orders">
+      <table class="profile-main_table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Order date/time</th>
+            <th>Items</th>
+            <th>Total Amount, $</th>
+          </tr>
+        </thead>
+        <tbody id="profile-main-orders-list">
+          {% include 'profile-main-orders.tmpl' %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %} 
+
+  {% if isAuth and isAuth.0.status_id == 9 %}
+  <div class="profile-main__div">
+    <div class="profile-main__title">
+      <span>ADMIN panel and profile</span>
+    </div>
+    <div class="profile-main__user">
+      <p class="profile-main__p-light">Your details</p>
+      <div>
+        <div>ADMIN name: {{ content_data.user_details.login }}</div>
+        <div>E-mail: {{ content_data.user_details.email }}</div>
+        <div>Password: {{ content_data.user_details.password }}</div>
+      </div>
+    </div>
+    <div class="profile-main__orders">
+      <table class="profile-main_table">
+        <thead>
+          <tr>
+            <th>User name</th>
+            <th>Order #</th>
+            <th>Order date/time</th>
+            <th>Items</th>
+            <th>Total Amount, $</th>
+            <th>DELETE</th>
+          </tr>
+        </thead>
+        <tbody id="profile-main-orders-list">
+          {% include 'profile-main-orders.tmpl' %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %} 
+  
+
+</section>
+
+<div class="clearfix"></div>

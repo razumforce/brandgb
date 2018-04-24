@@ -33,14 +33,36 @@
   align-items: center;
 }
 
-.profile-main__orders > div {
-  min-height: 25px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 70%;
-  @include border-solid-1-bottom($border-slider);
+.profile-main_table tbody > tr:hover {
+  background-color: #ddd;
+}
+
+.profile-main_table th,
+.profile-main_table td {
+  border-bottom: 1px solid #ddd;
+  padding-right: 25px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  text-align: right;
+}
+
+.profile-main_table th:nth-child(6) {
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  text-align: center;
+  color: $checkout-red-p;
+}
+
+.profile-main_table td:nth-child(6) {
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  text-align: center;
+  cursor: pointer;
+  color: $checkout-red-p;
 }
 
 .profile-main__p-light {
